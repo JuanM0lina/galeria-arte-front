@@ -1,0 +1,25 @@
+.pixel-marco {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: var(--tile-size) 1fr var(--tile-size);
+  grid-template-columns: var(--tile-size) 1fr var(--tile-size);
+  image-rendering: pixelated;
+}
+
+.marco-esquina {
+  width: var(--tile-size);
+  height: var(--tile-size);
+}
+
+.marco-esquina.tl { grid-area: 1 / 1; }
+.marco-esquina.tr { grid-area: 1 / 3; }
+.marco-esquina.bl { grid-area: 3 / 1; }
+.marco-esquina.br { grid-area: 3 / 3; }
+
+.marco-borde.horizontal.top { grid-area: 1 / 2; background-repeat: repeat-x; background-size: auto 100%; }
+.marco-borde.horizontal.bottom { grid-area: 3 / 2; background-repeat: repeat-x; background-size: auto 100%; }
+
+.marco-borde.vertical.left { grid-area: 2 / 1; background-repeat: repeat-y; background-size: 100% auto; }
+.marco-borde.vertical.right { grid-area: 2 / 3; background-repeat: repeat-y; background-size: 100% auto; }
+

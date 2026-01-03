@@ -1,0 +1,36 @@
+.navbar {
+  display: flex;
+  height: 39px;
+}
+
+/* extremos */
+.nav-left {
+  width: 57px;
+  background: url('/imgs/nav-bar/left.png') no-repeat;
+}
+
+.nav-right {
+  width: 61px;
+  background: url('/imgs/nav-bar/right.png') no-repeat;
+}
+
+/* centro flexible */
+.nav-center {
+  flex: 1;
+  background: url('/imgs/nav-bar/middle.png') repeat-x;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px;
+}
+
+/* botones */
+.nav-btn {
+  background: transparent;
+  border: none;
+  height: 39px;
+  cursor: pointer;
+}
+.nav-btn img {
+  height: 100%;
+}

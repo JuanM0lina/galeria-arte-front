@@ -1,0 +1,26 @@
+@import url('../../styles/marcos.scss');
+
+:host {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  --pixel-size: 2px;
+  --tile-base: 12;
+  --tile-size: calc(var(--tile-base) * var(--pixel-size));
+}
+
+.marco-content { 
+  grid-area: 2 / 2;
+  background-image: url('/imgs/marco-papel/marco-center.png');
+  background-repeat: repeat;
+  background-size: calc(56px * 2) calc(19px * 2);
+  image-rendering: pixelated;
+  color: black;
+  width: 100%;
+  height: 100%;
+}
+
+.marco-esquina.tl {
+  width: var(9px);
+}
