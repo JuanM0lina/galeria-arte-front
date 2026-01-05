@@ -1,1 +1,38 @@
-<p>autores works!</p>
+<marco-madera class="author-frame">
+
+  <div class="div_container_all">
+
+    <div class="div_top">
+      <app-btn-primary
+        label="Crear Autor"
+        (click)="crearAutor()">
+      </app-btn-primary>
+    </div>
+
+    <div class="div_title">
+      Lista de autores
+    </div>
+
+    <div class="div_autores">
+      <marco-papel
+        *ngFor="let autor of autores"
+        class="autor-clickable"
+        (click)="irAutor(autor.idAutor)"
+      >
+        <div class="autor-card">
+          <img
+            class="autor-avatar"
+            [src]="autor.avatar || '/assets/avatar-default.jpg'"
+          />
+
+          <div class="autor-nombre">
+            {{ autor.nombreCompleto }}
+          </div>
+        </div>
+      </marco-papel>
+
+    </div>
+
+  </div>
+
+</marco-madera>

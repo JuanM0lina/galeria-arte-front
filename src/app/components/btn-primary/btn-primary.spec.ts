@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AutorPage } from './autor';
+import { BtnPrimary } from './btn-primary';
 
-describe('AutorPage', () => {
-  let component: AutorPage;
-  let fixture: ComponentFixture<AutorPage>;
+describe('BtnPrimary', () => {
+  let component: BtnPrimary;
+  let fixture: ComponentFixture<BtnPrimary>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AutorPage]
+      imports: [BtnPrimary]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AutorPage);
+    fixture = TestBed.createComponent(BtnPrimary);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

@@ -1,0 +1,52 @@
+<marco-madera class="author-frame">
+
+  <div class="div_container_all">
+
+    <h2 class="form-title">
+      {{ esEdicion ? 'Modificar autor' : 'Crear nuevo autor' }}
+    </h2>
+
+    <div class="error-box" *ngIf="erroresBackend.length">
+      <ul>
+        <li *ngFor="let error of erroresBackend">
+          {{ error }}
+        </li>
+      </ul>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="author-form">
+
+      <div class="form-field" *ngIf="esEdicion">
+        <h3>ID del autor</h3>
+        <input formControlName="idAutor" readonly />
+      </div>
+
+      <div class="form-field">
+        <h3>Nombre completo</h3>
+        <input formControlName="nombreCompleto" placeholder="Nombre completo" />
+      </div>
+
+      <div class="form-field">
+        <h3>Correo de contacto</h3>
+        <input formControlName="correoContacto" placeholder="Correo" />
+      </div>
+
+      <div class="form-field">
+        <h3>URL del avatar</h3>
+        <input formControlName="avatar" placeholder="URL del avatar" />
+      </div>
+
+      <div class="div_submit">
+        <app-btn-primary
+          [label]="esEdicion ? 'Guardar cambios' : 'Crear autor'"
+          type="submit"
+          [disabled]="form.invalid">
+        </app-btn-primary>
+      </div>
+
+    </form>
+
+
+  </div>
+
+</marco-madera>

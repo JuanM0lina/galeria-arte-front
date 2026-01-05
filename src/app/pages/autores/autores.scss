@@ -1,0 +1,60 @@
+marco-madera {
+  display: block;
+  position: relative;
+  color: white;
+  text-shadow: 1px 1px 2px black;
+}
+
+.author-frame {
+  margin: 50px auto 0;
+  width: min(1200px, 92vw);
+  z-index: 4;
+}
+
+.div_container_all {
+  margin: 16px;
+}
+
+.div_top {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.div_title {
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+}
+
+/* contenedor de tarjetas */
+.div_autores {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+/* contenido interno del marco-papel */
+.autor-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.autor-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.autor-nombre {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+marco-papel:hover {
+  transform: translateY(-4px);
+}

@@ -1,9 +1,14 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
-import { Autor } from './pages/autor/autor';
+import { Autores } from './pages/autores/autores';
+import { AutorPage } from './pages/autor/autor';
+import { ModificarAutor } from './pages/modificar-autor/modificar-autor';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'home', redirectTo: '', pathMatch: 'full' },
-  { path: 'autor/:id', component: Autor },
+  { path: 'autores', component: Autores },
+  { path: 'autor/:id', component: AutorPage },
+  { path: 'crear-autor', component: ModificarAutor},
+  { path: 'modificar-autor/:id', component: ModificarAutor},
 ];
