@@ -78,3 +78,46 @@ marco-madera {
 .autor-obras{
   margin: 16px;
 }
+
+app-btn-delete {
+  margin-left: 6px;
+}
+
+
+
+
+
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-confirm {
+  width: min(420px, 90vw);
+  padding: 20px;
+  height: min-content;
+  text-align: center;
+}
+
+.modal-confirm h2 {
+  margin-bottom: 12px;
+}
+
+.modal-confirm p {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}

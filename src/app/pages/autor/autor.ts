@@ -12,6 +12,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { BtnPrimary } from "../../components/btn-primary/btn-primary";
+import { BtnDelete } from "../../components/btn-delete/btn-delete";
 
 @Component({
   selector: 'app-autor',
@@ -21,7 +22,8 @@ import { BtnPrimary } from "../../components/btn-primary/btn-primary";
     MarcoMaderaComponent,
     MarcoPapelComponent,
     RouterModule,
-    BtnPrimary
+    BtnPrimary,
+    BtnDelete
 ],
   templateUrl: './autor.html',
   styleUrl: './autor.scss',
@@ -33,6 +35,8 @@ export class AutorPage implements OnInit {
   idAutor!: number;
   autor: Autor | undefined;
   obrasDigitales: ObraDigital[] = [];
+  mostrarConfirmacion = false;
+  eliminando = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -88,4 +92,32 @@ export class AutorPage implements OnInit {
   modificarAutor() {
     this.router.navigate(['/modificar-autor', this.idAutor]);
   }
+
+  // ELIMINACIÓN ---------------------
+  
+
+  abrirConfirmacion() {
+    this.mostrarConfirmacion = true;
+  }
+
+  cancelarEliminacion() {
+    this.mostrarConfirmacion = false;
+  }
+
+  confirmarEliminacion() {
+    this.eliminando = true;
+
+    this.autoresService.eliminarAutor(this.idAutor).subscribe({
+      next: () => {
+        this.router.navigate(['/autores']);
+      },
+      error: err => {
+        this.error = 'Error eliminando el autor';
+        this.eliminando = false;
+        this.mostrarConfirmacion = false;
+        console.error(err);
+      }
+    });
+  }
+
 }

@@ -6,6 +6,10 @@
         label="Modificar Autor"
         (click)="modificarAutor()">
       </app-btn-primary>
+      <app-btn-delete
+        label="Eliminar Autor"
+        (click)="abrirConfirmacion()">
+      </app-btn-delete>
     </div>
 
     <div class="author-header">
@@ -39,3 +43,31 @@
   
 
 </marco-madera>
+
+<div class="modal-backdrop" *ngIf="mostrarConfirmacion">
+
+  <marco-papel class="modal-confirm">
+
+    <h2>Eliminar autor</h2>
+
+    <p>
+      Esta acción <strong>no se puede deshacer</strong>.
+      ¿Estás seguro de que deseas eliminar este autor?
+    </p>
+
+    <div class="modal-actions">
+      <app-btn-primary
+        label="Cancelar"
+        (click)="cancelarEliminacion()">
+      </app-btn-primary>
+
+      <app-btn-delete
+        label="Eliminar"
+        [disabled]="eliminando"
+        (click)="confirmarEliminacion()">
+      </app-btn-delete>
+    </div>
+
+  </marco-papel>
+
+</div>
