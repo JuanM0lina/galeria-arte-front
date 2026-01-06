@@ -94,7 +94,6 @@ export class AutorPage implements OnInit {
   }
 
   // ELIMINACIÓN ---------------------
-  
 
   abrirConfirmacion() {
     this.mostrarConfirmacion = true;
@@ -118,6 +117,12 @@ export class AutorPage implements OnInit {
         console.error(err);
       }
     });
+  }
+
+  // Registrar obras
+
+  registarObraDigital() {
+    this.router.navigate(['/autor', this.idAutor,'crear-obra']);
   }
 
 }

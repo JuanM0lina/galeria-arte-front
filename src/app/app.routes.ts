@@ -3,6 +3,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { Autores } from './pages/autores/autores';
 import { AutorPage } from './pages/autor/autor';
 import { ModificarAutor } from './pages/modificar-autor/modificar-autor';
+import { ModificarObra } from './pages/modificar-obra/modificar-obra';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -11,4 +12,6 @@ export const routes: Routes = [
   { path: 'autor/:id', component: AutorPage },
   { path: 'crear-autor', component: ModificarAutor},
   { path: 'modificar-autor/:id', component: ModificarAutor},
+  { path: 'autor/:idAutor/crear-obra', component: ModificarObra},
+  { path: 'autor/:idAutor/modificar-obra/:id', component: ModificarObra},
 ];

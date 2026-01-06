@@ -2,7 +2,7 @@ export interface ObraDigital {
   idObraDigital: number;
   titulo: string;
   descripcion: string;
-  fechaPublicacion: string;
+  fechaPublicacion: Date;
   idAutor: number;
   idArchivoPrincipal: number;
 }

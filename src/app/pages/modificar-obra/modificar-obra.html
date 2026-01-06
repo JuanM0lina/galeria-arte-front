@@ -1,0 +1,76 @@
+<marco-madera class="obra-frame">
+
+  <div class="div_container_all">
+
+    <h2 class="form-title">
+      {{ esEdicion ? 'Modificar obra digital' : 'Registrar nueva obra digital' }}
+    </h2>
+
+    <div class="error-box" *ngIf="erroresBackend.length">
+      <ul>
+        <li *ngFor="let error of erroresBackend">
+          {{ error }}
+        </li>
+      </ul>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="obra-form">
+
+      <div class="form-field" *ngIf="esEdicion">
+        <h3>ID de la obra digital</h3>
+        <input formControlName="idObraDigital" readonly />
+      </div>
+
+      <div class="form-field">
+        <h3>ID del autor</h3>
+        <input formControlName="idAutor" readonly />
+      </div>
+
+      <div class="form-field">
+        <h3>Título</h3>
+        <input formControlName="titulo" placeholder="Título" />
+      </div>
+
+      <div class="form-field">
+        <h3>Descripción</h3>
+        <input formControlName="descripcion" placeholder="Descripción" />
+      </div>
+
+      <div class="form-field">
+        <h3>Fecha de publicación</h3>
+        <input formControlName="fechaPublicacion" placeholder="Fecha de publicación" type="date"/>
+      </div>
+
+      <div class="form-field">
+        <h3>Categorías</h3>
+
+        <div class="categorias-grid">
+          <label
+          class="categoria-item"
+          *ngFor="let categoria of categorias; let i = index">
+
+          <input
+              type="checkbox"
+              [formControl]="categoriasForm.controls[i]" />
+
+          <span>{{ categoria.nombreCategoria }}</span>
+
+          </label>
+        </div>
+      </div>
+
+
+      <div class="div_submit">
+        <app-btn-primary
+          [label]="esEdicion ? 'Guardar cambios' : 'Registrar obra digital'"
+          type="submit"
+          [disabled]="form.invalid">
+        </app-btn-primary>
+      </div>
+
+    </form>
+
+
+  </div>
+
+</marco-madera>
