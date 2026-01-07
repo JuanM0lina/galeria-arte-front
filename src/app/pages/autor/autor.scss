@@ -9,6 +9,7 @@ marco-madera {
   padding: 16px;
   margin: 50px auto 0;
   width: min(900px, 92vw);
+  height: min-content;
   z-index: 4;
 }
 
@@ -120,4 +121,108 @@ app-btn-delete {
   display: flex;
   justify-content: center;
   gap: 16px;
+}
+
+
+
+
+
+
+
+
+
+.obra-card {
+  margin-bottom: 16px;
+  text-shadow: none;
+}
+
+.obra-content {
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* Imagen */
+.obra-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.obra-image img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Info */
+.obra-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.obra-titulo {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-shadow: none;
+}
+
+.obra-anio {
+  font-size: 0.95rem;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.obra-descripcion {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+/* Acciones */
+.obra-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.obra-actions-top {
+  display: flex;
+  gap: 6px;
+}
+
+.icon-btn {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  color: white;
+  font-size: 1rem;
+}
+
+.icon-btn.edit:hover {
+  background: rgba(240, 195, 109, 0.25);
+}
+
+.icon-btn.delete:hover {
+  background: rgba(200, 60, 60, 0.35);
+}
+
+/* Botón grande */
+.obra-ver-btn {
+  margin-top: 12px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(180deg, #f0c36d, #d9a441);
+  color: #2b1b00;
+  font-weight: 600;
 }

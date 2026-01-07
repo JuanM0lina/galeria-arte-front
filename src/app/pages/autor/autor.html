@@ -29,23 +29,67 @@
 
     <div class="autor-obras">
       <h2>Obras</h2>
+
       <div class="div_top">
         <app-btn-primary
           label="Registrar obra"
           (click)="registarObraDigital()">
         </app-btn-primary>
       </div>
-      <marco-papel>
-        Hola amigos
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab sint facere doloribus quos voluptate fuga neque iure nesciunt quaerat ipsa, et consequuntur reiciendis corporis velit, repellat quam, dolorem praesentium recusandae?
-        <div style="height: 100px;"></div>
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Asperiores alias explicabo sunt placeat, commodi quasi neque veniam qui odit a totam. Nam, repudiandae aspernatur necessitatibus natus quia eius ad odit.
-        <div style="height: 100px;"></div>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur voluptates tempora illum aut. Suscipit, error non inventore voluptatibus ab magni quo ipsum, aut eaque saepe voluptatem animi consequatur qui ipsam!
 
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam non perspiciatis assumenda inventore totam dolorem repellendus officia voluptatum cupiditate, corrupti corporis repudiandae voluptates asperiores odio optio placeat quisquam dolor quis!
+      <marco-papel
+        *ngFor="let obra of obrasDigitales"
+        class="obra-card">
+
+        <div class="obra-content">
+
+          <!-- Imagen -->
+          <div class="obra-image">
+            <!-- Placeholder por ahora -->
+            <img src="assets/image-placeholder.webp" alt="Obra digital" />
+          </div>
+
+          <!-- Info -->
+          <div class="obra-info">
+            <h3 class="obra-titulo">
+              {{ obra.titulo }}
+              <span class="obra-anio">
+                ({{ obra.fechaPublicacion | slice:0:4 }})
+              </span>
+            </h3>
+
+            <p class="obra-descripcion">
+              {{ obra.descripcion }}
+            </p>
+          </div>
+
+          <!-- Acciones -->
+          <div class="obra-actions">
+            <div class="obra-actions-top">
+              <button
+                class="icon-btn edit"
+                (click)="editarObra(obra.idObraDigital)">
+                ✏️
+              </button>
+
+              <button
+                class="icon-btn delete"
+                (click)="eliminarObra(obra.idObraDigital)">
+                🗑️
+              </button>
+            </div>
+
+            <button
+              class="obra-ver-btn"
+              (click)="verObra(obra.idObraDigital)">
+              Ver obra
+            </button>
+          </div>
+
+        </div>
       </marco-papel>
     </div>
+
   </div>
   
 

@@ -95,7 +95,7 @@ export class ModificarObra implements OnInit {
       const payload = {
         titulo: raw.titulo,
         descripcion: raw.descripcion,
-        fechaPublicacion: new Date(raw.fechaPublicacion),
+        fechaPublicacion: raw.fechaPublicacion,
         idAutor: this.idAutor!,
         idArchivoPrincipal: null,
       };
@@ -108,7 +108,7 @@ export class ModificarObra implements OnInit {
       .filter((v: number | null) => v !== null);
       console.log(categoriasSeleccionadas)
 
-      /*this.obrasService.crearObra(payload).subscribe({
+    this.obrasService.crearObra(payload).subscribe({
         next: () => {
           // redirigir, mensaje, etc.
         },
@@ -118,8 +118,9 @@ export class ModificarObra implements OnInit {
           } else {
             this.erroresBackend = ['Error al registrar la obra'];
           }
+          this.cdr.detectChanges();
         }
-      });*/
+      });
 
     } else {
       // aquí luego va el update

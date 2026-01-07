@@ -7,7 +7,7 @@ import { ObraDigital } from '../models/obra-digital.model';
 export interface CrearObrasDTO {
   titulo: string;
   descripcion: string;
-  fechaPublicacion: Date;
+  fechaPublicacion: string;
   idAutor: number;
   idArchivoPrincipal: number | null;
 }

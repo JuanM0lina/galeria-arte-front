@@ -125,4 +125,9 @@ export class AutorPage implements OnInit {
     this.router.navigate(['/autor', this.idAutor,'crear-obra']);
   }
 
+  editarObra(id: number) {}
+  eliminarObra(id: number) {}
+  verObra(id: number) {}
+
+
 }

@@ -104,11 +104,11 @@ marco-madera {
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 10px;
 }
-
+/*
 .categoria-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 
   padding: 8px 10px;
   border-radius: 6px;
@@ -116,10 +116,24 @@ marco-madera {
 
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.25);
+}*/
+
+.categoria-item {
+  display: grid;
+  grid-template-columns: auto 1fr; /* checkbox compacto + texto flexible */
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.3);
 }
+
 
 .categoria-item input {
   accent-color: #f0c36d;
+  margin-right: 10px;
 }
 
 .categoria-item:hover {
