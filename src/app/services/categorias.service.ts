@@ -13,16 +13,17 @@ export interface CrearCategoriaDTO {
 export class CategoriasService {
 
   private readonly URL = 'http://localhost:8082/api/categorias';
+  //private readonly URL = 'https://galeriaarte-gujm.onrender.com/api/categorias';
 
   constructor(private http: HttpClient) {}
-  
+
   getCategoriaPorId(id: number) {
     return this.http.get<ApiResponse<Categoria>>(
       `${this.URL}/${id}`,
       { headers: { 'Cache-Control': 'no-cache' } }
     );
   }
-  
+
   actualizarCategoria(idCategoria: number, datos: CrearCategoriaDTO) {
     return this.http.put<ApiResponse<null>>(
       `${this.URL}/${idCategoria}`,
@@ -30,21 +31,21 @@ export class CategoriasService {
       { headers: { 'Cache-Control': 'no-cache' } }
     )
   }
-  
+
   eliminarCategoria(id: number) {
     return this.http.delete<ApiResponse<null>>(
       `${this.URL}/${id}`,
       { headers: { 'Cache-Control': 'no-cache' } }
     );
   }
-  
+
   getCategorias() {
     return this.http.get<ApiResponse<Categoria[]>>(
       this.URL,
       { headers: { 'Cache-Control': 'no-cache' } }
     );
   }
-  
+
   crearCategoria(datos: CrearCategoriaDTO) {
     return this.http.post<ApiResponse<null>>(
       this.URL,
@@ -52,5 +53,5 @@ export class CategoriasService {
       { headers: { 'Cache-Control': 'no-cache' } }
     )
   }
-  
+
 }

@@ -16,6 +16,7 @@ export interface CrearObrasDTO {
 export class ObrasDigitalesService {
 
   private readonly URL = 'http://localhost:8082/api/obras';
+  //private readonly URL = 'https://galeriaarte-gujm.onrender.com/api/obras';
 
   constructor(private http: HttpClient) {}
 
@@ -32,6 +33,22 @@ export class ObrasDigitalesService {
       datos,
       { headers: { 'Cache-Control': 'no-cache' } }
     )
+  }
+
+  getObrasPorCategoria(idCategoria: number) {
+    // Confirmar la ruta en el back
+    return this.http.get<ApiResponse<ObraDigital[]>>(
+      `${this.URL}/categoria/${idCategoria}`,
+      { headers: { 'Cache-Control': 'no-cache' } }
+    );
+  }
+
+  getObrasPorColeccion(idColeccion: number) {
+    // Confirmar la ruta en el back
+    return this.http.get<ApiResponse<ObraDigital[]>>(
+      `${this.URL}/coleccion/${idColeccion}`,
+      { headers: { 'Cache-Control': 'no-cache' } }
+    );
   }
 
 }

@@ -14,16 +14,17 @@ export interface CrearAutorDTO {
 export class AutoresService {
 
   private readonly URL = 'http://localhost:8082/api/autores';
+  //private readonly URL = 'https://galeriaarte-gujm.onrender.com/api/autores';
 
   constructor(private http: HttpClient) {}
-  
+
   getAutorPorId(id: number) {
     return this.http.get<ApiResponse<Autor>>(
       `${this.URL}/${id}`,
       { headers: { 'Cache-Control': 'no-cache' } }
     );
   }
-  
+
   actualizarAutor(idAutor: number, datos: CrearAutorDTO) {
     return this.http.put<ApiResponse<null>>(
       `${this.URL}/${idAutor}`,
@@ -31,21 +32,21 @@ export class AutoresService {
       { headers: { 'Cache-Control': 'no-cache' } }
     )
   }
-  
+
   eliminarAutor(id: number) {
     return this.http.delete<ApiResponse<null>>(
       `${this.URL}/${id}`,
       { headers: { 'Cache-Control': 'no-cache' } }
     );
   }
-  
+
   getAutores() {
     return this.http.get<ApiResponse<Autor[]>>(
       this.URL,
       { headers: { 'Cache-Control': 'no-cache' } }
     );
   }
-  
+
   crearAutor(datos: CrearAutorDTO) {
     return this.http.post<ApiResponse<null>>(
       this.URL,
@@ -53,5 +54,5 @@ export class AutoresService {
       { headers: { 'Cache-Control': 'no-cache' } }
     )
   }
-  
+
 }

@@ -1,0 +1,27 @@
+<marco-madera class="frame-container">
+
+  <div class="content-container">
+    <h1 class="pixel-title">Colecciones</h1>
+
+    <p *ngIf="cargando" style="text-align: center;">Cargando...</p>
+
+    <div class="grid-colecciones">
+
+      <marco-papel *ngFor="let col of colecciones" class="card-coleccion">
+        <div class="card-content">
+          <h2>{{ col.nombreColeccion }}</h2>
+          <p class="desc">{{ col.descripcionColeccion }}</p>
+
+          <div class="fechas">
+            <span>📅 Inicio: {{ col.fechaInicio | date:'dd/MM/yyyy' }}</span>
+            <span>🏁 Fin: {{ col.fechaFin | date:'dd/MM/yyyy' }}</span>
+          </div>
+
+          <button class="btn-ver">Ver Obras</button>
+        </div>
+      </marco-papel>
+
+    </div>
+  </div>
+
+</marco-madera>

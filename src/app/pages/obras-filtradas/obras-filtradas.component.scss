@@ -1,0 +1,52 @@
+.obra-card {
+  margin-bottom: 16px;
+  text-shadow: none;
+}
+
+.obra-content {
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* Imagen */
+.obra-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.obra-image img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Info */
+.obra-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.obra-titulo {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-shadow: none;
+}
+
+.obra-anio {
+  font-size: 0.95rem;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.obra-descripcion {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}

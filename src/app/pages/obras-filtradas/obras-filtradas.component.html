@@ -1,0 +1,32 @@
+<marco-madera class="frame-container">
+  <div class="content-container">
+
+    <div class="header-nav">
+      <button class="btn-back" (click)="volver()">⬅ Volver</button>
+      <h1 class="pixel-title">{{ tituloPagina }}</h1>
+    </div>
+
+    <p *ngIf="cargando" style="text-align: center;">Buscando obras...</p>
+
+    <div *ngIf="!cargando && obras.length === 0" style="text-align: center;">
+      <p>No hay obras en esta sección todavía.</p>
+    </div>
+
+    <div class="lista-obras">
+      <marco-papel *ngFor="let obra of obras" class="obra-card">
+        <div class="obra-content">
+          <div class="obra-image">
+            <img [src]="'assets/image-placeholder.webp'" alt="Obra">
+          </div>
+
+          <div class="obra-info">
+            <h3>{{ obra.titulo }}</h3>
+            <p>{{ obra.descripcion }}</p>
+            <small>Publicado: {{ obra.fechaPublicacion | date:'yyyy' }}</small>
+          </div>
+        </div>
+      </marco-papel>
+    </div>
+
+  </div>
+</marco-madera>

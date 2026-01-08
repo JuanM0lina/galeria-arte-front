@@ -1,0 +1,65 @@
+.frame-container {
+  display: block;
+  padding: 16px;
+  margin: 20px auto;
+  width: min(1000px, 95vw);
+  height: 90vh; /* Ocupa casi toda la altura */
+}
+
+.content-container {
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto; /* Permite hacer scroll si hay muchas colecciones */
+}
+
+.pixel-title {
+  text-align: center;
+  color: #ffffff;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 0px rgba(255,255,255,0.5);
+}
+
+.grid-colecciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #3e2723;
+
+  h2 { margin: 0; font-size: 1.2rem; }
+  .desc { font-style: italic; opacity: 0.9; }
+
+  .fechas {
+    font-size: 0.85rem;
+    background: rgba(0,0,0,0.05);
+    padding: 5px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .btn-ver {
+    margin-top: 10px;
+    padding: 8px;
+    background: #d9a441; /* Mismo dorado que usó Juan en btn-edit [cite: 35] */
+    border: 2px solid #5d3a1a;
+    color: #2b1b00;
+    font-weight: bold;
+    cursor: pointer;
+    &:hover { background: #f0c36d; }
+  }
+}
+
+.card-coleccion {
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-5px); /* Efecto de "levantarse" */
+  }
+}
