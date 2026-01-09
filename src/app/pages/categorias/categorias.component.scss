@@ -23,7 +23,7 @@
 
 .grid-categorias {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Tarjetas más compactas */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 25px;
 }
 
@@ -31,7 +31,7 @@
   transition: transform 0.2s;
 
   &:hover {
-    transform: translateY(-5px); /* Efecto de "levantarse" */
+    transform: translateY(-5px);
   }
 }
 
@@ -60,18 +60,18 @@
   p {
     font-size: 0.9rem;
     opacity: 0.9;
-    flex-grow: 1; /* Empuja el botón hacia abajo */
+    flex-grow: 1;
   }
 
   .btn-explorar {
     width: 100%;
     padding: 8px;
-    background: #8d6e63; /* Un tono café más oscuro diferente al dorado */
+    background: #8d6e63;
     border: 2px solid #3e2723;
     color: white;
     font-weight: bold;
     cursor: pointer;
-    border-radius: 4px; /* Un poco redondeado */
+    border-radius: 4px;
 
     &:hover {
       background: #a1887f;
@@ -110,5 +110,41 @@
 
   .search-icon {
     font-size: 1.5rem;
+  }
+}
+
+.page-indicator {
+  color: white;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px black;
+}
+
+.paginacion-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 30px;
+  padding-bottom: 20px;
+}
+
+.btn-nav {
+  background: #f0c36d;
+  border: 3px solid #5d3a1a;
+  color: #2b1b00;
+  padding: 8px 15px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+
+  &:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px rgba(0,0,0,0.3);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
   }
 }

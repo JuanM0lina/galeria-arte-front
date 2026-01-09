@@ -3,11 +3,24 @@
   <div class="content-container">
     <h1 class="pixel-title">Colecciones</h1>
 
-    <p *ngIf="cargando" style="text-align: center;">Cargando...</p>
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="Buscar colección..."
+        [(ngModel)]="terminoBusqueda"
+        (input)="onSearch()"
+        class="pixel-input"
+      >
+    </div>
+
+    <p *ngIf="cargando" style="text-align: center; color: white;">Cargando...</p>
+
+    <div *ngIf="!cargando && coleccionesFiltradas.length === 0" style="text-align: center; color: white;">
+      <p>No se encontraron colecciones con ese nombre.</p>
+    </div>
 
     <div class="grid-colecciones">
-
-      <marco-papel *ngFor="let col of colecciones" class="card-coleccion">
+      <marco-papel *ngFor="let col of datosPaginados" class="card-coleccion">
         <div class="card-content">
           <h2>{{ col.nombreColeccion }}</h2>
           <p class="desc">{{ col.descripcionColeccion }}</p>
@@ -17,11 +30,31 @@
             <span>🏁 Fin: {{ col.fechaFin | date:'dd/MM/yyyy' }}</span>
           </div>
 
-          <button class="btn-ver">Ver Obras</button>
+          <button class="btn-ver" (click)="verObras(col.idColeccion)">Ver Obras</button>
         </div>
       </marco-papel>
-
     </div>
+
+    <div class="paginacion-controls" *ngIf="coleccionesFiltradas.length > itemsPorPagina">
+      <button
+        (click)="anteriorPagina()"
+        [disabled]="paginaActual === 0"
+        class="btn-nav">
+        ◀
+      </button>
+
+      <span class="page-indicator">
+        {{ paginaActual + 1 }} / {{ totalPaginas }}
+      </span>
+
+      <button
+        (click)="siguientePagina()"
+        [disabled]="paginaActual >= totalPaginas - 1"
+        class="btn-nav">
+        ▶
+      </button>
+    </div>
+
   </div>
 
 </marco-madera>

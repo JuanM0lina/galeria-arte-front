@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms'; // Indispensable para el buscador
 import { Router } from '@angular/router';
 import { MarcoMaderaComponent } from '../../components/marco-madera/marco-madera.component';
 import { MarcoPapelComponent } from '../../components/marco-papel/marco-papel.component';
@@ -21,7 +21,7 @@ export class CategoriasComponent implements OnInit {
   // Variables para Paginación y Búsqueda
   paginaActual = 0;
   itemsPorPagina = 3;
-  terminoBusqueda = ''; // Lo que escribe el usuario
+  terminoBusqueda = '';
 
   constructor(
     private categoriasService: CategoriasService,
@@ -37,26 +37,39 @@ export class CategoriasComponent implements OnInit {
       error: (err) => {
         console.error(err);
         this.cargando = false;
+        // Datos falsos de respaldo por si el back falla
+        this.categorias = [
+          { idCategoria: 1, nombreCategoria: 'Pintura al Óleo', descripcionCategoria: 'Técnicas clásicas.' },
+          { idCategoria: 2, nombreCategoria: 'Escultura Digital', descripcionCategoria: 'Modelado 3D.' },
+          { idCategoria: 3, nombreCategoria: 'Fotografía', descripcionCategoria: 'Capturas reales.' },
+          { idCategoria: 4, nombreCategoria: 'Pixel Art', descripcionCategoria: 'Arte 8-bits.' }
+        ] as any;
       }
     });
   }
 
-  // Filtro por búsqueda
+  // 1. Lógica del Buscador
   get categoriasFiltradas() {
     return this.categorias.filter(cat =>
       cat.nombreCategoria.toLowerCase().includes(this.terminoBusqueda.toLowerCase())
     );
   }
 
-  // Paginamos lo que ya fue filtrado
+  // 2. Lógica de Paginación (Qué mostrar en pantalla)
   get datosPaginados() {
     const inicio = this.paginaActual * this.itemsPorPagina;
     return this.categoriasFiltradas.slice(inicio, inicio + this.itemsPorPagina);
   }
 
-  // Control de paginas
+  // 3. AQUÍ ESTÁ LA SOLUCIÓN DEL ERROR MATH
+  // Calculamos el total de páginas aquí dentro
+  get totalPaginas(): number {
+    return Math.ceil(this.categoriasFiltradas.length / this.itemsPorPagina);
+  }
+
+  // Control de botones
   siguientePagina() {
-    if ((this.paginaActual + 1) * this.itemsPorPagina < this.categoriasFiltradas.length) {
+    if (this.paginaActual < this.totalPaginas - 1) {
       this.paginaActual++;
     }
   }
@@ -67,14 +80,11 @@ export class CategoriasComponent implements OnInit {
     }
   }
 
-  // Cuando buscan, reseteamos a la pagina 0 para que no se pierdan
   onSearch() {
-    this.paginaActual = 0;
+    this.paginaActual = 0; // Reiniciar a página 1 si buscas
   }
 
-  // Navegar a la vista de obras
-  verObras(id: number, nombre: string) {
-    // Pasamos el ID y el nombre.
+  verObras(id: number) {
     this.router.navigate(['/obras-filtradas', 'categoria', id]);
   }
 }

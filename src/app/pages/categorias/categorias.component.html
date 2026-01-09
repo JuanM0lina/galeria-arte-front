@@ -11,29 +11,26 @@
         (input)="onSearch()"
         class="pixel-input"
       >
-      <span class="search-icon">🔍</span>
     </div>
 
-    <p *ngIf="cargando" class="loading-text">Cargando datos del servidor...</p>
+    <p *ngIf="cargando" style="text-align: center; color: white;">Cargando catálogo...</p>
 
-    <p *ngIf="!cargando && categoriasFiltradas.length === 0" class="loading-text">
-      No se encontraron resultados.
-    </p>
+    <div *ngIf="!cargando && categoriasFiltradas.length === 0" style="text-align: center; color: white;">
+      <p>No se encontraron resultados.</p>
+    </div>
 
     <div class="grid-categorias" *ngIf="!cargando">
-
       <marco-papel *ngFor="let cat of datosPaginados" class="card-categoria">
         <div class="card-content">
           <div class="cat-icon">🎨</div>
           <h2>{{ cat.nombreCategoria }}</h2>
           <p>{{ cat.descripcionCategoria }}</p>
 
-          <button class="btn-explorar" (click)="verObras(cat.idCategoria, cat.nombreCategoria)">
-            Explorar Obras
+          <button class="btn-explorar" (click)="verObras(cat.idCategoria)">
+            Explorar
           </button>
         </div>
       </marco-papel>
-
     </div>
 
     <div class="paginacion-controls" *ngIf="categoriasFiltradas.length > itemsPorPagina">
@@ -45,12 +42,12 @@
       </button>
 
       <span class="page-indicator">
-        {{ paginaActual + 1 }} / {{ Math.ceil(categoriasFiltradas.length / itemsPorPagina) }}
+        {{ paginaActual + 1 }} / {{ totalPaginas }}
       </span>
 
       <button
         (click)="siguientePagina()"
-        [disabled]="(paginaActual + 1) * itemsPorPagina >= categoriasFiltradas.length"
+        [disabled]="paginaActual >= totalPaginas - 1"
         class="btn-nav">
         ▶
       </button>
