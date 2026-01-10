@@ -5,16 +5,11 @@ import { Coleccion } from '../models/coleccion.model';
 
 @Injectable({ providedIn: 'root' })
 export class ColeccionesService {
-
-  private readonly URL = 'http://localhost:8082/api/colecciones';
-  //private readonly URL = 'https://galeriaarte-gujm.onrender.com/api/colecciones';
+  private readonly URL = 'https://galeriaarte-gujm.onrender.com/api/colecciones';
 
   constructor(private http: HttpClient) {}
 
   getColecciones() {
-    return this.http.get<ApiResponse<Coleccion[]>>(
-      this.URL,
-      { headers: { 'Cache-Control': 'no-cache' } }
-    );
+    return this.http.get<ApiResponse<Coleccion[]>>(this.URL);
   }
 }

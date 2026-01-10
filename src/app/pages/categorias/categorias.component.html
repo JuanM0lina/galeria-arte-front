@@ -1,23 +1,12 @@
 <marco-madera class="frame-container">
-
   <div class="content-container">
     <h1 class="pixel-title">Categorías</h1>
 
     <div class="search-box">
-      <input
-        type="text"
-        placeholder="Buscar categoría..."
-        [(ngModel)]="terminoBusqueda"
-        (input)="onSearch()"
-        class="pixel-input"
-      >
+      <input type="text" placeholder="Buscar..." [(ngModel)]="terminoBusqueda" (input)="onSearch()" class="pixel-input">
     </div>
 
-    <p *ngIf="cargando" style="text-align: center; color: white;">Cargando catálogo...</p>
-
-    <div *ngIf="!cargando && categoriasFiltradas.length === 0" style="text-align: center; color: white;">
-      <p>No se encontraron resultados.</p>
-    </div>
+    <p *ngIf="cargando" style="text-align: center; color: white;">Cargando...</p>
 
     <div class="grid-categorias" *ngIf="!cargando">
       <marco-papel *ngFor="let cat of datosPaginados" class="card-categoria">
@@ -25,33 +14,15 @@
           <div class="cat-icon">🎨</div>
           <h2>{{ cat.nombreCategoria }}</h2>
           <p>{{ cat.descripcionCategoria }}</p>
-
-          <button class="btn-explorar" (click)="verObras(cat.idCategoria)">
-            Explorar
-          </button>
+          <button class="btn-explorar" (click)="verObras(cat.idCategoria)">Explorar</button>
         </div>
       </marco-papel>
     </div>
 
     <div class="paginacion-controls" *ngIf="categoriasFiltradas.length > itemsPorPagina">
-      <button
-        (click)="anteriorPagina()"
-        [disabled]="paginaActual === 0"
-        class="btn-nav">
-        ◀
-      </button>
-
-      <span class="page-indicator">
-        {{ paginaActual + 1 }} / {{ totalPaginas }}
-      </span>
-
-      <button
-        (click)="siguientePagina()"
-        [disabled]="paginaActual >= totalPaginas - 1"
-        class="btn-nav">
-        ▶
-      </button>
+      <button (click)="anteriorPagina()" [disabled]="paginaActual === 0" class="btn-nav">◀</button>
+      <span class="page-indicator">{{ paginaActual + 1 }} / {{ totalPaginas }}</span>
+      <button (click)="siguientePagina()" [disabled]="paginaActual >= totalPaginas - 1" class="btn-nav">▶</button>
     </div>
   </div>
-
 </marco-madera>

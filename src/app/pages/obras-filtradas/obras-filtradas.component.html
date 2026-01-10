@@ -6,24 +6,26 @@
       <h1 class="pixel-title">{{ tituloPagina }}</h1>
     </div>
 
-    <p *ngIf="cargando" style="text-align: center;">Buscando obras...</p>
+    <p *ngIf="cargando" style="text-align: center; color: white;">Buscando obras...</p>
 
-    <div *ngIf="!cargando && obras.length === 0" style="text-align: center;">
-      <p>No hay obras en esta sección todavía.</p>
+    <div *ngIf="!cargando && obrasFiltradas.length === 0" style="text-align: center; color: white;">
+      <p>No se encontraron obras en esta sección.</p>
     </div>
 
     <div class="lista-obras">
-      <marco-papel *ngFor="let obra of obras" class="obra-card">
+      <marco-papel *ngFor="let obra of obrasFiltradas" class="obra-card">
         <div class="obra-content">
           <div class="obra-image">
-            <img [src]="'assets/image-placeholder.webp'" alt="Obra">
+             <img [src]="obra.urlImagen || 'assets/image-placeholder.webp'" alt="Obra">
           </div>
 
           <div class="obra-info">
-            <h3>{{ obra.titulo }}</h3>
-            <p>{{ obra.descripcion }}</p>
-            <small>Publicado: {{ obra.fechaPublicacion | date:'yyyy' }}</small>
-          </div>
+            <h3 class="obra-titulo">{{ obra.titulo }}</h3>
+            <span class="obra-anio">Publicado: {{ obra.fechaPublicacion | date:'yyyy' }}</span>
+            <p class="obra-descripcion">{{ obra.descripcion }}</p>
+            <small *ngIf="obra.autor">Autor: {{ obra.autor?.nombreCompleto }}</small>
+
+            </div>
         </div>
       </marco-papel>
     </div>
