@@ -13,8 +13,8 @@ export interface CrearAutorDTO {
 @Injectable({ providedIn: 'root' })
 export class AutoresService {
 
-  private readonly URL = 'http://localhost:8082/api/autores';
-  //private readonly URL = 'https://galeriaarte-gujm.onrender.com/api/autores';
+  //private readonly URL = 'http://localhost:8082/api/autores';
+  private readonly URL = 'https://galeriaarte-gujm.onrender.com/api/autores';
 
   constructor(private http: HttpClient) {}
 

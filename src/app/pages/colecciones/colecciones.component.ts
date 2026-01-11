@@ -6,11 +6,18 @@ import { MarcoMaderaComponent } from '../../components/marco-madera/marco-madera
 import { MarcoPapelComponent } from '../../components/marco-papel/marco-papel.component';
 import { ColeccionesService } from '../../services/colecciones.service';
 import { Coleccion } from '../../models/coleccion.model';
+import { BtnPrimary } from '../../components/btn-primary/btn-primary';
 
 @Component({
   selector: 'app-colecciones',
   standalone: true,
-  imports: [CommonModule, MarcoMaderaComponent, MarcoPapelComponent, FormsModule],
+  imports: [
+    CommonModule,
+    MarcoMaderaComponent,
+      MarcoPapelComponent,
+      FormsModule,
+      BtnPrimary
+    ],
   templateUrl: './colecciones.component.html',
   styleUrl: './colecciones.component.scss'
 })
@@ -61,5 +68,9 @@ export class ColeccionesComponent implements OnInit {
 
   verObras(id: number) {
     this.router.navigate(['/obras-filtradas', 'coleccion', id]);
+  }
+
+  crearColeccion() {
+    this.router.navigate(['/crear-coleccion']);
   }
 }

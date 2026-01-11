@@ -6,11 +6,18 @@ import { MarcoMaderaComponent } from '../../components/marco-madera/marco-madera
 import { MarcoPapelComponent } from '../../components/marco-papel/marco-papel.component';
 import { CategoriasService } from '../../services/categorias.service';
 import { Categoria } from '../../models/categoria.model';
+import { BtnPrimary } from '../../components/btn-primary/btn-primary';
 
 @Component({
   selector: 'app-categorias',
   standalone: true,
-  imports: [CommonModule, MarcoMaderaComponent, MarcoPapelComponent, FormsModule],
+  imports: [
+    CommonModule,
+    MarcoMaderaComponent,
+    MarcoPapelComponent,
+    FormsModule,
+    BtnPrimary,
+  ],
   templateUrl: './categorias.component.html',
   styleUrl: './categorias.component.scss'
 })
@@ -21,7 +28,12 @@ export class CategoriasComponent implements OnInit {
   itemsPorPagina = 3;
   terminoBusqueda = '';
 
-  constructor(private catService: CategoriasService, private router: Router) {}
+  constructor(
+    private catService: CategoriasService,
+    private router: Router
+  ) {
+
+  }
 
   ngOnInit() {
     this.catService.getCategorias().subscribe({
@@ -71,5 +83,9 @@ export class CategoriasComponent implements OnInit {
 
   verObras(id: number) {
     this.router.navigate(['/obras-filtradas', 'categoria', id]);
+  }
+
+  crearCategoria() {
+    this.router.navigate(['/crear-categoria']);
   }
 }

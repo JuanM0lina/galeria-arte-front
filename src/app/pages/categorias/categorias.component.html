@@ -1,6 +1,13 @@
-<marco-madera class="frame-container">
-  <div class="content-container">
-    <h1 class="pixel-title">Categorías</h1>
+<marco-madera>
+  <div class="div_container_all">
+    <div class="div_top">
+      <app-btn-primary
+        label="Crear Categoría"
+        (click)="crearCategoria()">
+      </app-btn-primary>
+    </div>
+
+    <h1 id="titulo">Categorías</h1>
 
     <div class="search-box">
       <input type="text" placeholder="Buscar..." [(ngModel)]="terminoBusqueda" (input)="onSearch()" class="pixel-input">

@@ -3,7 +3,7 @@
   <div class="div_container_all">
 
     <h2 class="form-title">
-      {{ esEdicion ? 'Modificar autor' : 'Crear nuevo autor' }}
+      {{ esEdicion ? 'Modificar categoría' : 'Crear nueva categoría' }}
     </h2>
 
     <div class="error-box" *ngIf="erroresBackend.length">
@@ -17,28 +17,23 @@
     <form [formGroup]="form" (ngSubmit)="guardar()" class="data-form">
 
       <div class="form-field" *ngIf="esEdicion">
-        <h3>ID del autor</h3>
-        <input formControlName="idAutor" readonly />
+        <h3>ID de la categoría</h3>
+        <input formControlName="idCategoria" readonly />
       </div>
 
       <div class="form-field">
-        <h3>Nombre completo</h3>
-        <input formControlName="nombreCompleto" placeholder="Nombre completo" />
+        <h3>Nombre de la categoría</h3>
+        <input formControlName="nombreCategoria" placeholder="Nombre" />
       </div>
 
       <div class="form-field">
-        <h3>Correo de contacto</h3>
-        <input formControlName="correoContacto" placeholder="Correo" />
-      </div>
-
-      <div class="form-field">
-        <h3>URL del avatar</h3>
-        <input formControlName="avatar" placeholder="URL del avatar" />
+        <h3>Descripción</h3>
+        <input formControlName="descripcionCategoria" placeholder="Descripción" />
       </div>
 
       <div class="div_submit">
         <app-btn-primary
-          [label]="esEdicion ? 'Guardar cambios' : 'Crear autor'"
+          [label]="esEdicion ? 'Guardar cambios' : 'Crear categoría'"
           type="submit"
           [disabled]="form.invalid">
         </app-btn-primary>
@@ -46,7 +41,5 @@
 
     </form>
 
-
   </div>
-
 </marco-madera>

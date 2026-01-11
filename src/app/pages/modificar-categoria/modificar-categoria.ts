@@ -1,45 +1,42 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { AutoresService } from '../../services/autores.service';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MarcoMaderaComponent } from '../../components/marco-madera/marco-madera.component';
-import { NgIf, NgFor } from '@angular/common';
-import { ChangeDetectorRef } from '@angular/core';
-import { BtnPrimary } from "../../components/btn-primary/btn-primary";
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NgFor, NgIf } from '@angular/common';
+import { BtnPrimary } from '../../components/btn-primary/btn-primary';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CategoriasService } from '../../services/categorias.service';
 
 @Component({
-  selector: 'app-modificar-autor',
-  standalone: true,
+  selector: 'app-modificar-categoria',
   imports: [
     ReactiveFormsModule,
     MarcoMaderaComponent,
     NgIf,
     NgFor,
-    BtnPrimary
+    BtnPrimary,
   ],
-  templateUrl: './modificar-autor.html',
-  styleUrl: './modificar-autor.scss'
+  templateUrl: './modificar-categoria.html',
+  styleUrl: './modificar-categoria.scss',
 })
-export class ModificarAutor implements OnInit {
-
+export class ModificarCategoria implements OnInit {
+  
   esEdicion = false;
-  autorId?: number;
+  categoriaId?: number;
   form: any;
   datos: object = {};
   erroresBackend: string[] = [];
 
   constructor(
+    private categoriasService: CategoriasService,
     private route: ActivatedRoute,
     private router: Router,
-    private autoresService: AutoresService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
   ) {
     this.form = this.fb.group({
-      idAutor: [{ value: null, disabled: true }],
-      nombreCompleto: [''],
-      correoContacto: [''],
-      avatar: ['']
+      idCategoria: [{ value: null, disabled: true }],
+      nombreCategoria: [''],
+      descripcionCategoria: [''],
     });
   }
 
@@ -49,8 +46,8 @@ export class ModificarAutor implements OnInit {
 
       if (id) {
         this.esEdicion = true;
-        this.autorId = Number(id);
-        this.cargarAutor(this.autorId);
+        this.categoriaId = Number(id);
+        this.cargarCategoria(this.categoriaId);
       } else {
         this.esEdicion = false;
         this.form.reset();
@@ -58,20 +55,25 @@ export class ModificarAutor implements OnInit {
     });
   }
 
-  cargarAutor(id: number) {
-    this.autoresService.getAutorPorId(id).subscribe(res => {
+  cargarCategoria(id: number) {
+    this.categoriasService.getCategoriaPorId(id).subscribe(res => {
       this.form.patchValue(res.data);
     });
   }
 
   guardar() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.erroresBackend = ['Formulario inválido'];
+      this.cdr.detectChanges();
+      return;
+    }
     this.erroresBackend = [];
 
     if (this.esEdicion) {
-      this.autoresService.actualizarAutor(this.autorId!, this.form.value).subscribe({
+      this.categoriasService.actualizarCategoria(this.categoriaId!, this.form.value).subscribe({
         next: () => {
-          this.router.navigate(['/autor/'+this.autorId])
+          //this.router.navigate(['/categoria/'+this.categoriaId])
+          this.router.navigate(['/categorias']);
         },
         error: (err) => {
           if (err.status === 400 && err.error?.errors) {
@@ -83,9 +85,9 @@ export class ModificarAutor implements OnInit {
         }
       });
     } else {
-      this.autoresService.crearAutor(this.form.value).subscribe({
+      this.categoriasService.crearCategoria(this.form.value).subscribe({
         next: () => {
-          this.router.navigate(['/autores'])
+          this.router.navigate(['/categorias']);
         },
         error: (err) => {
           if (err.status === 400 && err.error?.errors) {

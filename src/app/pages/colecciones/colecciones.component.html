@@ -1,6 +1,14 @@
-<marco-madera class="frame-container">
-  <div class="content-container">
-    <h1 class="pixel-title">Colecciones</h1>
+<marco-madera>
+  <div class="div_container_all">
+
+    <div class="div_top">
+      <app-btn-primary
+        label="Crear Colección"
+        (click)="crearColeccion()">
+      </app-btn-primary>
+    </div>
+
+    <h1 id="titulo">Colecciones</h1>
 
     <div class="search-box">
       <input type="text" placeholder="Buscar..." [(ngModel)]="terminoBusqueda" (input)="onSearch()" class="pixel-input">
