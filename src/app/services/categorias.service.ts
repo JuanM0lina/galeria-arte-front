@@ -29,6 +29,13 @@ export class CategoriasService {
     )
   }
 
+  eliminarCategoria(id: number) {
+    return this.http.delete<ApiResponse<null>>(
+      `${this.URL}/${id}`,
+      { headers: { 'Cache-Control': 'no-cache' } }
+    );
+  }
+
   getCategorias() {
     return this.http.get<ApiResponse<Categoria[]>>(this.URL);
   }

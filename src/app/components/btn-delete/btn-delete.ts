@@ -11,5 +11,12 @@ export class BtnDelete {
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
   @Input() disabled = false;
 
-  @Output() click = new EventEmitter<void>();
+  @Output() clicked = new EventEmitter<void>();
+
+  onClick(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.clicked.emit();
+  }
+
 }

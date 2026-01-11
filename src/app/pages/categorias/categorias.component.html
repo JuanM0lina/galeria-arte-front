@@ -15,21 +15,81 @@
 
     <p *ngIf="cargando" style="text-align: center; color: white;">Cargando...</p>
 
+    <div class="paginacion-controls" *ngIf="categoriasFiltradas.length > itemsPorPagina">
+      <button (click)="anteriorPagina()" [disabled]="paginaActual === 0" class="btn-nav">◀</button>
+      <span class="page-indicator">
+        {{ paginaActual + 1 }} / {{ totalPaginas }}
+      </span>
+      <button
+        (click)="siguientePagina()"
+        [disabled]="paginaActual >= totalPaginas - 1"
+        class="btn-nav">
+        ▶
+      </button>
+    </div>
+
+
     <div class="grid-categorias" *ngIf="!cargando">
-      <marco-papel *ngFor="let cat of datosPaginados" class="card-categoria">
+      <marco-papel
+        *ngFor="let cat of datosPaginados"
+        class="card-categoria"
+      >
         <div class="card-content">
+
+          <div class="card-actions">
+            <button class="icon-btn edit" (click)="editarCategoria(cat)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="icon-btn delete" (click)="abrirConfirmacion(cat)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+
           <div class="cat-icon">🎨</div>
           <h2>{{ cat.nombreCategoria }}</h2>
           <p>{{ cat.descripcionCategoria }}</p>
-          <button class="btn-explorar" (click)="verObras(cat.idCategoria)">Explorar</button>
+
+          <button
+            class="btn-explorar"
+            (click)="verObras(cat.idCategoria)"
+          >
+            Explorar
+          </button>
+
         </div>
       </marco-papel>
     </div>
 
-    <div class="paginacion-controls" *ngIf="categoriasFiltradas.length > itemsPorPagina">
-      <button (click)="anteriorPagina()" [disabled]="paginaActual === 0" class="btn-nav">◀</button>
-      <span class="page-indicator">{{ paginaActual + 1 }} / {{ totalPaginas }}</span>
-      <button (click)="siguientePagina()" [disabled]="paginaActual >= totalPaginas - 1" class="btn-nav">▶</button>
-    </div>
+
+    
   </div>
 </marco-madera>
+
+<div class="modal-backdrop" *ngIf="mostrarConfirmacion">
+
+  <marco-papel class="modal-confirm">
+
+    <h2>Eliminar categoría</h2>
+
+    <p>
+      Esta acción <strong>no se puede deshacer</strong>.
+      ¿Estás seguro de que deseas eliminar la categoría?
+    </p>
+
+    <div class="modal-actions">
+      <app-btn-primary
+        label="Cancelar"
+        (click)="cancelarEliminacion()">
+      </app-btn-primary>
+
+      <app-btn-delete
+        label="Eliminar"
+        type="button"
+        [disabled]="eliminando"
+        (clicked)="confirmarEliminacion()">
+      </app-btn-delete>
+    </div>
+
+  </marco-papel>
+
+</div>

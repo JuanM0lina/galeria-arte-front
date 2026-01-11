@@ -1,7 +1,7 @@
 <button
   class="btn-delete"
-  [attr.type]="type"
+  type="button"
   [disabled]="disabled"
-  (click)="click.emit()">
+  (click)="onClick($event)">
   {{ label }}
 </button>
