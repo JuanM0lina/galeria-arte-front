@@ -37,6 +37,7 @@ export class ModificarObra implements OnInit {
     private categoriasService: CategoriasService,
     private obrasService: ObrasDigitalesService,
     private route: ActivatedRoute,
+    private router: Router,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
   ) {
@@ -45,7 +46,7 @@ export class ModificarObra implements OnInit {
       titulo: [''],
       descripcion: [''],
       fechaPublicacion: [''],
-      idAutor: [''],
+      idAutor: [],
       idArchivoPrincipal: [''],
       categorias: this.fb.array([]),
     });
@@ -54,27 +55,30 @@ export class ModificarObra implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
+      // Cargar en el forms el id del autor
       this.idAutor = Number(params.get('idAutor'));
-
       this.form.patchValue({
         idAutor: this.idAutor
       });
-
+      // Cargar categorías
       this.cargarCategorias();
 
+      // Si estamos en modo de modificación
+      const id = params.get('id');
       if (id) {
         this.esEdicion = true;
         this.idObraDigital = Number(id);
-
-        this.form.patchValue({
-          idObraDigital: this.idObraDigital
-        });
-
-        // aquí luego cargarás la obra
+        this.cargarObra(Number(id));
+        
       } else {
         this.esEdicion = false;
       }
+    });
+  }
+
+  cargarObra(id: number) {
+    this.obrasService.getObraPorID(id).subscribe(res => {
+      this.form.patchValue(res.data);
     });
   }
 
@@ -85,13 +89,13 @@ export class ModificarObra implements OnInit {
     if (this.form.invalid) return;
 
     if (!this.esEdicion) {
-
+      // Creación
       const raw = this.form.value;
       if(!raw.fechaPublicacion) {
         this.erroresBackend.push('Fecha de publicación inválida');
         return;
       }
-
+      // Setear los datos en un dummy
       const payload = {
         titulo: raw.titulo,
         descripcion: raw.descripcion,
@@ -99,18 +103,18 @@ export class ModificarObra implements OnInit {
         idAutor: this.idAutor!,
         idArchivoPrincipal: null,
       };
-
       console.log(payload);
+      // Ver qué categorías se seleccionaron
       const categoriasSeleccionadas = this.form.value.categorias
       .map((checked: boolean, i: number) =>
         checked ? this.categorias[i].idCategoria : null
       )
       .filter((v: number | null) => v !== null);
       console.log(categoriasSeleccionadas)
-
-    this.obrasService.crearObra(payload).subscribe({
+      // Crear la obra
+      this.obrasService.crearObra(payload).subscribe({
         next: () => {
-          // redirigir, mensaje, etc.
+          
         },
         error: err => {
           if (err.status === 400 && err.error?.errors) {
@@ -123,7 +127,36 @@ export class ModificarObra implements OnInit {
       });
 
     } else {
-      // aquí luego va el update
+      // Modificación
+      const raw = this.form.value;
+      if(!raw.fechaPublicacion) {
+        this.erroresBackend.push('Fecha de publicación inválida');
+        return;
+      }
+      // Setear los datos en un dummy
+      const payload = {
+        titulo: raw.titulo,
+        descripcion: raw.descripcion,
+        fechaPublicacion: raw.fechaPublicacion,
+        idAutor: this.idAutor!,
+        idArchivoPrincipal: null,
+      };
+      if(!this.idObraDigital){
+        return;
+      }
+      this.obrasService.actualizarObra(this.idObraDigital, payload).subscribe({
+        next: () => {
+          this.router.navigate(['/autor/'+this.idAutor])
+        },
+        error: err => {
+          if (err.status === 400 && err.error?.errors) {
+            this.erroresBackend = err.error.errors;
+          } else {
+            this.erroresBackend = ['Error al registrar la obra'];
+          }
+          this.cdr.detectChanges();
+        }
+      })
     }
   }
 

@@ -17,6 +17,22 @@ export class ObrasDigitalesService {
 
   constructor(private http: HttpClient) {}
 
+  getObraPorID(id: number) {
+    return this.http.get<ApiResponse<ObraDigital>>(
+      `${this.URL}/${id}`,
+      { headers: { 'Cache-Control': 'no-cache' } }
+    );
+  }
+
+  actualizarObra(id: number, datos: CrearObrasDTO) {
+    return this.http.put<ApiResponse<null>>(
+      `${this.URL}/${id}`,
+      datos,
+      { headers: { 'Cache-Control': 'no-cache' } }
+    );
+  }
+
+
   getObras() {
     return this.http.get<ApiResponse<ObraDigital[]>>(this.URL);
   }

@@ -198,24 +198,33 @@ app-btn-delete {
 }
 
 .icon-btn {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-  padding: 6px 8px;
+  border: none;
+  background: rgba(0, 0, 0, 0.15);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   cursor: pointer;
-  color: white;
-  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  i {
+    font-size: 0.85rem;
+  }
+
+  &.edit {
+    color: #6b4d40;
+  }
+
+  &.delete {
+    color: #b00020;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.25);
+  }
 }
 
-.icon-btn.edit:hover {
-  background: rgba(240, 195, 109, 0.25);
-}
-
-.icon-btn.delete:hover {
-  background: rgba(200, 60, 60, 0.35);
-}
-
-/* Botón grande */
 .obra-ver-btn {
   margin-top: 12px;
   padding: 8px 14px;
