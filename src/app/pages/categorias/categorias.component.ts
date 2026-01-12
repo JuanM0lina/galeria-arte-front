@@ -62,6 +62,8 @@ export class CategoriasComponent implements OnInit {
     });
   }
 
+  // ------- Paginación -------
+
   get totalPaginas(): number {
     return Math.ceil(this.categoriasFiltradas.length / this.itemsPorPagina);
   }

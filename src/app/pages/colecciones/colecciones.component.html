@@ -1,7 +1,8 @@
-<marco-madera class="frame-container">
-  <div class="content-container">
+<marco-madera>
+  
+  <div class="div_container_all">
 
-    <div class="div_top" style="margin-bottom: 20px;">
+    <div class="div_top">
       <app-btn-primary
         label="Crear Colección"
         (click)="crearColeccion()">
@@ -9,12 +10,26 @@
     </div>
 
     <div class="header-container">
-      <h1 class="pixel-title">Colecciones</h1>
-      <app-btn-reporte tipo="colecciones"></app-btn-reporte>
+      <h1 id="titulo">Colecciones</h1>
+      <app-btn-reporte
+        tipo="colecciones">
+      </app-btn-reporte>
     </div>
 
-    <div class="search-box">
-      <input type="text" placeholder="Buscar..." [(ngModel)]="terminoBusqueda" (input)="onSearch()" class="pixel-input">
+    <div class="div_title">
+      Lista de colecciones
+    </div>
+
+    <div class="div_controles">
+      <div class="paginacion-controls" *ngIf="coleccionesFiltradas.length > itemsPorPagina">
+        <button (click)="anteriorPagina()" [disabled]="paginaActual === 0" class="btn-nav">◀</button>
+        <span class="page-indicator">{{ paginaActual + 1 }} / {{ totalPaginas }}</span>
+        <button (click)="siguientePagina()" [disabled]="paginaActual >= totalPaginas - 1" class="btn-nav">▶</button>
+      </div>
+
+      <div class="search-box">
+        <input type="text" placeholder="Buscar..." [(ngModel)]="terminoBusqueda" (input)="onSearch()" class="pixel-input">
+      </div>
     </div>
 
     <p *ngIf="cargando" style="text-align: center; color: white;">Cargando...</p>
@@ -33,10 +48,5 @@
       </marco-papel>
     </div>
 
-    <div class="paginacion-controls" *ngIf="coleccionesFiltradas.length > itemsPorPagina">
-      <button (click)="anteriorPagina()" [disabled]="paginaActual === 0" class="btn-nav">◀</button>
-      <span class="page-indicator">{{ paginaActual + 1 }} / {{ totalPaginas }}</span>
-      <button (click)="siguientePagina()" [disabled]="paginaActual >= totalPaginas - 1" class="btn-nav">▶</button>
-    </div>
   </div>
 </marco-madera>
