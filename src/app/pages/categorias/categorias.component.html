@@ -1,6 +1,13 @@
 <marco-madera class="frame-container">
   <div class="content-container">
 
+    <div class="div_top" style="margin-bottom: 20px; display: flex; justify-content: flex-start;">
+      <app-btn-primary
+        label="Crear Categoría"
+        (click)="crearCategoria()">
+      </app-btn-primary>
+    </div>
+
     <div class="header-container">
       <h1 class="pixel-title">Categorías</h1>
       <app-btn-reporte tipo="categorias"></app-btn-reporte>
@@ -12,13 +19,31 @@
 
     <p *ngIf="cargando" style="text-align: center; color: white;">Cargando...</p>
 
+    <div class="confirm-overlay" *ngIf="mostrarConfirmacion">
+      <div class="confirm-box">
+        <p>¿Estás seguro de eliminar "{{ catEliminar?.nombreCategoria }}"?</p>
+        <div class="confirm-actions">
+          <button (click)="confirmarEliminacion()" [disabled]="eliminando">Sí, eliminar</button>
+          <button (click)="cancelarEliminacion()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
     <div class="grid-categorias" *ngIf="!cargando">
       <marco-papel *ngFor="let cat of datosPaginados" class="card-categoria">
         <div class="card-content">
           <div class="cat-icon">🎨</div>
           <h2>{{ cat.nombreCategoria }}</h2>
           <p>{{ cat.descripcionCategoria }}</p>
-          <button class="btn-explorar" (click)="verObras(cat.idCategoria)">Explorar</button>
+          
+          <div class="actions">
+             <button class="btn-explorar" (click)="verObras(cat.idCategoria)">Explorar</button>
+             <div class="admin-actions" style="margin-top: 10px; display: flex; gap: 10px; justify-content: center;">
+                <button class="btn-edit-simple" (click)="editarCategoria(cat)">✏️</button>
+                <app-btn-delete (click)="abrirConfirmacion(cat)"></app-btn-delete>
+             </div>
+          </div>
+
         </div>
       </marco-papel>
     </div>
@@ -30,32 +55,3 @@
     </div>
   </div>
 </marco-madera>
-
-<div class="modal-backdrop" *ngIf="mostrarConfirmacion">
-
-  <marco-papel class="modal-confirm">
-
-    <h2>Eliminar categoría</h2>
-
-    <p>
-      Esta acción <strong>no se puede deshacer</strong>.
-      ¿Estás seguro de que deseas eliminar la categoría?
-    </p>
-
-    <div class="modal-actions">
-      <app-btn-primary
-        label="Cancelar"
-        (click)="cancelarEliminacion()">
-      </app-btn-primary>
-
-      <app-btn-delete
-        label="Eliminar"
-        type="button"
-        [disabled]="eliminando"
-        (clicked)="confirmarEliminacion()">
-      </app-btn-delete>
-    </div>
-
-  </marco-papel>
-
-</div>
