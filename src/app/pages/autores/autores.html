@@ -15,14 +15,26 @@
         tipo="autores">
       </app-btn-reporte>
     </div>
-    
+
     <div class="div_title">
       Lista de autores
     </div>
 
-    <div class="div_autores">
+    <div class="div_controles">
+      <div class="paginacion-controls" *ngIf="autoresFiltrados.length > itemsPorPagina">
+        <button (click)="anteriorPagina()" [disabled]="paginaActual === 0" class="btn-nav">◀</button>
+        <span class="page-indicator">{{ paginaActual + 1 }} / {{ totalPaginas }}</span>
+        <button (click)="siguientePagina()" [disabled]="paginaActual >= totalPaginas - 1" class="btn-nav">▶</button>
+      </div>
+      
+      <div class="search-box">
+        <input type="text" placeholder="Buscar..." [(ngModel)]="terminoBusqueda" (input)="onSearch()" class="pixel-input">
+      </div>
+    </div>
+
+    <div class="div_autores" *ngIf="!cargando">
       <marco-papel
-        *ngFor="let autor of autores"
+        *ngFor="let autor of datosPaginados"
         class="autor-clickable"
         (click)="irAutor(autor.idAutor)"
       >

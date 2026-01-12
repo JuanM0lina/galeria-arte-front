@@ -43,6 +43,76 @@ marco-madera {
   margin-bottom: 16px;
 }
 
+// --------- Search Bar y navegación ---------
+
+.div_controles {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-indicator {
+  color: white;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px black;
+}
+
+.paginacion-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 4px
+}
+
+.btn-nav {
+  background: linear-gradient(#f0c36d, #d9a441);
+  border: none;
+  border-radius: 8px;
+  color: #2b1b00;
+  padding: 8px 15px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+
+  &:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 6px rgba(0,0,0,0.4);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.search-box {
+  margin-left: auto;
+  display: flex;
+  justify-content: center;
+
+  .pixel-input {
+    padding: 10px;
+    font-size: medium;
+    font-family: inherit;
+    background: #fff8dc;
+    border: 3px solid #5d3a1a;
+    color: #3e2723;
+    width: 300px;
+    outline: none;
+    box-shadow: inset 3px 3px 0px rgba(0,0,0,0.1);
+    border-radius: 10px;
+
+    &:focus {
+      background: #fff;
+      border-color: #8b4513;
+    }
+  }
+}
+
+// --------- Grid del contenido ---------
+
 /* contenedor de tarjetas */
 .div_autores {
   display: grid;
