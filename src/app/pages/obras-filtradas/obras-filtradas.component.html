@@ -1,20 +1,21 @@
-<marco-madera class="frame-container">
-  <div class="content-container">
+<marco-madera>
+  
+  <div class="div_container_all">
     
-    <div class="header-nav">
-      <button class="btn-back" (click)="volver()">
-        <span class="pixel-icon">⬅</span> Volver
-      </button>
-      
-      <h1 class="pixel-title">{{ tituloPagina }}</h1>
-      
-      <div class="report-container">
-        <app-btn-reporte 
+    <div class="div_top">
+      <app-btn-primary
+        label="Regresar"
+        (click)="volver()">
+      </app-btn-primary>
+    </div>
+
+    <div class="header-container">
+      <h1 id="titulo">{{ tituloPagina }}</h1>
+      <app-btn-reporte 
           *ngIf="tipoFiltro && idFiltro" 
           [tipo]="tipoFiltro" 
           [id]="idFiltro">
         </app-btn-reporte>
-      </div>
     </div>
 
     <div *ngIf="cargando" class="status-msg">
@@ -30,11 +31,12 @@
         <div class="obra-content">
           
           <div class="obra-image">
-            <img [src]="obra.urlImagen || 'assets/image-placeholder.webp'" 
-                 [alt]="obra.titulo"
-                 onerror="this.src='assets/image-placeholder.webp'">
+            <img
+              *ngIf="obra.idArchivoPrincipal && archivosMap.get(obra.idArchivoPrincipal)?.formato?.startsWith('image/')"
+              [src]="getRutaArchivo(archivosMap.get(obra.idArchivoPrincipal)?.ruta!)"
+            />
           </div>
-
+          
           <div class="obra-info">
             <h3 class="obra-titulo">{{ obra.titulo }}</h3>
             
@@ -48,11 +50,88 @@
             <div class="obra-footer" *ngIf="obra.autor">
               <small>Autor: <strong>{{ obra.autor.nombreCompleto }}</strong></small>
             </div>
+
+            <button class="btn-remove" (click)="eliminarDeColeccion(obra)">
+              Quitar
+            </button>
+
           </div>
 
         </div>
       </marco-papel>
     </div>
+
+    <!-- =============================== -->
+    <!-- OBRAS DISPONIBLES PARA AÑADIR -->
+    <!-- =============================== -->
+
+    <div class="separador">
+      <h2>Otras obras disponibles</h2>
+    </div>
+
+    <div class="div_controles">
+      
+      <div class="paginacion-controls">
+        <button (click)="anteriorDisponibles()" class="btn-nav"
+        [disabled]="paginaDisponibles === 0">
+        ◀
+        </button>
+      
+        <span class="page-indicator">
+          {{ paginaDisponibles + 1 }}
+        </span>
+      
+        <button (click)="siguienteDisponibles()" class="btn-nav"
+          [disabled]="(paginaDisponibles + 1) * itemsPorPaginaDisponibles >= obrasDisponiblesFiltradas.length">
+          ▶
+        </button>
+      </div>
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Filtrar obras..."
+          [(ngModel)]="filtroDisponibles"
+          (input)="filtrarDisponibles()"
+          class="pixel-input"/>
+      </div>
+    </div>
+
+    <div class="lista-obras" *ngIf="disponiblesPaginadas.length > 0">
+      <marco-papel *ngFor="let obra of disponiblesPaginadas" class="obra-card">
+        <div class="obra-content">
+
+          <div class="obra-image">
+            <img
+              *ngIf="obra.idArchivoPrincipal && archivosMap.get(obra.idArchivoPrincipal)?.formato?.startsWith('image/')"
+              [src]="getRutaArchivo(archivosMap.get(obra.idArchivoPrincipal)?.ruta!)"
+            />
+
+            <img
+              *ngIf="!obra.idArchivoPrincipal || !archivosMap.get(obra.idArchivoPrincipal)"
+              src="assets/image-placeholder.webp"
+            />
+          </div>
+
+          <div class="obra-info">
+            <h3>{{ obra.titulo }}</h3>
+            <p>{{ obra.descripcion }}</p>
+
+            <!-- botón futuro -->
+            <button class="btn-add" (click)="agregarAColeccion(obra)">
+              Añadir
+            </button>
+
+          </div>
+
+        </div>
+      </marco-papel>
+    </div>
+
+    <div *ngIf="!cargando && obrasDisponiblesFiltradas.length === 0"
+        class="status-msg">
+      <p>No hay obras disponibles.</p>
+    </div>
+
 
   </div>
 </marco-madera>

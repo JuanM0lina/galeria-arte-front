@@ -1,45 +1,121 @@
-.frame-container {
+marco-madera {
   display: block;
-  padding: 16px;
-  margin: 20px auto;
-  width: min(1000px, 95vw);
-  height: 90vh;
+  position: relative;
+  color: white;
+  text-shadow: 1px 1px 2px black;
+  margin: 50px auto 0;
+  width: min(1200px, 92vw);
+  z-index: 4;
+  margin-bottom: 36px;
 }
 
-.content-container {
-  padding: 20px;
+.div_container_all {
+  margin: 20px;
   height: 100%;
   overflow-y: auto;
 }
 
-.header-nav {
+.div_top {
+  padding-top: 3px;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.header-container, .header-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#titulo {
+  margin-bottom: 8px;
+  text-align: center;
+  color: white;
+  text-shadow: 3px 3px 2px rgba(0, 0, 0, 0.9);
+  text-transform: uppercase;
+}
+
+.div_title {
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+}
+
+// --------- Search Bar y navegación ---------
+
+
+.div_controles {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
-.pixel-title {
-  color: #ffffff;
-  text-transform: uppercase;
-  text-shadow: 2px 2px 0px rgba(255,255,255,0.5);
-  margin: 0;
-}
-
-.btn-back {
-  background: #8d6e63;
-  border: 2px solid #3e2723;
+.page-indicator {
   color: white;
-  padding: 8px 12px;
-  cursor: pointer;
   font-weight: bold;
+  text-shadow: 1px 1px 2px black;
+}
 
-  &:hover { background: #a1887f; }
+.paginacion-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 4px
+}
+
+.btn-nav {
+  background: linear-gradient(#f0c36d, #d9a441);
+  border: none;
+  border-radius: 8px;
+  color: #2b1b00;
+  padding: 8px 15px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+
+  &:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 6px rgba(0,0,0,0.4);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.search-box {
+  margin-left: auto;
+  display: flex;
+  justify-content: center;
+
+  .pixel-input {
+    padding: 10px;
+    font-size: medium;
+    font-family: inherit;
+    background: #fff8dc;
+    border: 3px solid #5d3a1a;
+    color: #3e2723;
+    width: 300px;
+    outline: none;
+    box-shadow: inset 3px 3px 0px rgba(0,0,0,0.1);
+    border-radius: 10px;
+
+    &:focus {
+      background: #fff;
+      border-color: #8b4513;
+    }
+  }
 }
 
 .lista-obras {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 16px;
 }
 
