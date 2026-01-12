@@ -15,47 +15,40 @@ marco-madera {
 }
 
 .div_top {
+  padding-top: 3px;
   display: flex;
   justify-content: flex-end;
   margin-bottom: 12px;
 }
 
+.header-container, .header-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
 #titulo {
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   text-align: center;
   color: white;
   text-shadow: 3px 3px 2px rgba(0, 0, 0, 0.9);
   text-transform: uppercase;
 }
 
-.search-box {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-
-  .pixel-input {
-    padding: 10px;
-    font-size: medium;
-    font-family: inherit;
-    background: #fff8dc;
-    border: 3px solid #5d3a1a;
-    color: #3e2723;
-    width: 300px;
-    outline: none;
-    box-shadow: inset 3px 3px 0px rgba(0,0,0,0.1);
-    border-radius: 10px;
-
-    &:focus {
-      background: #fff;
-      border-color: #8b4513;
-    }
-  }
+.div_title {
+  font-size: 1.4rem;
+  margin-bottom: 16px;
 }
 
-.loading-text {
-  text-align: center;
-  font-size: 1.2rem;
-  color: white;
+// --------- Search Bar y navegación ---------
+
+.div_controles {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
 }
 
 .page-indicator {
@@ -69,8 +62,7 @@ marco-madera {
   justify-content: center;
   align-items: center;
   gap: 20px;
-  margin-top: 30px;
-  padding-bottom: 20px;
+  padding: 4px
 }
 
 .btn-nav {
@@ -93,6 +85,38 @@ marco-madera {
     cursor: not-allowed;
     box-shadow: none;
   }
+}
+
+.search-box {
+  margin-left: auto;
+  display: flex;
+  justify-content: center;
+
+  .pixel-input {
+    padding: 10px;
+    font-size: medium;
+    font-family: inherit;
+    background: #fff8dc;
+    border: 3px solid #5d3a1a;
+    color: #3e2723;
+    width: 300px;
+    outline: none;
+    box-shadow: inset 3px 3px 0px rgba(0,0,0,0.1);
+    border-radius: 10px;
+
+    &:focus {
+      background: #fff;
+      border-color: #8b4513;
+    }
+  }
+}
+
+// --------- Grid del contenido ---------
+
+.loading-text {
+  text-align: center;
+  font-size: 1.2rem;
+  color: white;
 }
 
 .grid-categorias {
@@ -197,6 +221,8 @@ p {
   }
 }
 
+// --------- Modal ---------
+
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -231,11 +257,3 @@ p {
   gap: 16px;
 }
 
-.header-container, .header-nav {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 10px;
-  text-align: center;
-}
