@@ -1,31 +1,55 @@
 <marco-madera class="frame-container">
   <div class="content-container">
-
+    
     <div class="header-nav">
-      <button class="btn-back" (click)="volver()">⬅ Volver</button>
+      <button class="btn-back" (click)="volver()">
+        <span class="pixel-icon">⬅</span> Volver
+      </button>
+      
       <h1 class="pixel-title">{{ tituloPagina }}</h1>
+      
+      <div class="report-container">
+        <app-btn-reporte 
+          *ngIf="tipoFiltro && idFiltro" 
+          [tipo]="tipoFiltro" 
+          [id]="idFiltro">
+        </app-btn-reporte>
+      </div>
     </div>
 
-    <p *ngIf="cargando" style="text-align: center; color: white;">Buscando obras...</p>
-
-    <div *ngIf="!cargando && obrasFiltradas.length === 0" style="text-align: center; color: white;">
-      <p>No se encontraron obras en esta sección.</p>
+    <div *ngIf="cargando" class="status-msg">
+      <p>Buscando obras en la galería...</p>
     </div>
 
-    <div class="lista-obras">
+    <div *ngIf="!cargando && obrasFiltradas.length === 0" class="status-msg">
+      <p>No se encontraron obras para este filtro.</p>
+    </div>
+
+    <div class="lista-obras" *ngIf="!cargando && obrasFiltradas.length > 0">
       <marco-papel *ngFor="let obra of obrasFiltradas" class="obra-card">
         <div class="obra-content">
+          
           <div class="obra-image">
-             <img [src]="obra.urlImagen || 'assets/image-placeholder.webp'" alt="Obra">
+            <img [src]="obra.urlImagen || 'assets/image-placeholder.webp'" 
+                 [alt]="obra.titulo"
+                 onerror="this.src='assets/image-placeholder.webp'">
           </div>
 
           <div class="obra-info">
             <h3 class="obra-titulo">{{ obra.titulo }}</h3>
-            <span class="obra-anio">Publicado: {{ obra.fechaPublicacion | date:'yyyy' }}</span>
-            <p class="obra-descripcion">{{ obra.descripcion }}</p>
-            <small *ngIf="obra.autor">Autor: {{ obra.autor?.nombreCompleto }}</small>
-
+            
+            <div class="obra-badges">
+              <span class="badge-date">📅 {{ obra.fechaPublicacion | date:'yyyy' }}</span>
+              <span class="badge-cat" *ngIf="obra.categoria">🎨 {{ obra.categoria.nombreCategoria }}</span>
             </div>
+
+            <p class="obra-descripcion">{{ obra.descripcion }}</p>
+            
+            <div class="obra-footer" *ngIf="obra.autor">
+              <small>Autor: <strong>{{ obra.autor.nombreCompleto }}</strong></small>
+            </div>
+          </div>
+
         </div>
       </marco-papel>
     </div>
