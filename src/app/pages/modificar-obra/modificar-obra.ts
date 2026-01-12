@@ -6,9 +6,12 @@ import { MarcoMaderaComponent } from '../../components/marco-madera/marco-madera
 import { BtnPrimary } from "../../components/btn-primary/btn-primary";
 import { NgIf, NgFor } from '@angular/common';
 import { Categoria } from '../../models/categoria.model';
-import { Coleccion } from '../../models/coleccion.model';
 import { CategoriasService } from '../../services/categorias.service';
+import { ObraDigital } from '../../models/obra-digital.model';
 import { ObrasDigitalesService } from '../../services/obras.service';
+import { ObraCategoria } from '../../models/obra-categoria.model';
+import { ObraCategoriaService } from '../../services/obra-categoria.service';
+import { forkJoin, switchMap, of } from 'rxjs';
 
 @Component({
   selector: 'app-modificar-obra',
@@ -36,6 +39,7 @@ export class ModificarObra implements OnInit {
   constructor(
     private categoriasService: CategoriasService,
     private obrasService: ObrasDigitalesService,
+    private obraCategoriaService: ObraCategoriaService,
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
@@ -64,12 +68,13 @@ export class ModificarObra implements OnInit {
       this.cargarCategorias();
 
       // Si estamos en modo de modificación
-      const id = params.get('id');
-      if (id) {
+      const id_ = params.get('id');
+      if (id_) {
+        let id = Number(id_);
         this.esEdicion = true;
-        this.idObraDigital = Number(id);
-        this.cargarObra(Number(id));
-        
+        this.idObraDigital = id;
+        this.cargarObra(id);
+        this.cargarCategoriasDeObra(id);
       } else {
         this.esEdicion = false;
       }
@@ -80,6 +85,12 @@ export class ModificarObra implements OnInit {
     this.obrasService.getObraPorID(id).subscribe(res => {
       this.form.patchValue(res.data);
     });
+  }
+
+  cargarCategoriasDeObra(id: number) {
+    this.obraCategoriaService.getObraCategoriaPorIdObra(id).subscribe(res => {
+      console.log(res.data);
+    })
   }
 
 
@@ -95,6 +106,7 @@ export class ModificarObra implements OnInit {
         this.erroresBackend.push('Fecha de publicación inválida');
         return;
       }
+
       // Setear los datos en un dummy
       const payload = {
         titulo: raw.titulo,
@@ -104,15 +116,37 @@ export class ModificarObra implements OnInit {
         idArchivoPrincipal: null,
       };
       console.log(payload);
+
       // Ver qué categorías se seleccionaron
       const categoriasSeleccionadas = this.form.value.categorias
       .map((checked: boolean, i: number) =>
         checked ? this.categorias[i].idCategoria : null
       )
       .filter((v: number | null) => v !== null);
-      console.log(categoriasSeleccionadas)
+      console.log(categoriasSeleccionadas);
+
       // Crear la obra
-      this.obrasService.crearObra(payload).subscribe({
+      this.obrasService.crearObra(payload).pipe(
+        switchMap(res => {
+          const obra = res.data as unknown as ObraDigital;
+          if (!obra) {
+            throw new Error('Error: No se pudo crear la obra');
+          }
+          const idObra = obra.idObraDigital;
+
+          if (!categoriasSeleccionadas.length) {
+            return of(null);
+          }
+          // Crear requests ObraCategoria
+          const requests = categoriasSeleccionadas.map((idCategoria: any) =>
+            this.obraCategoriaService.crearObraCategoria({
+              idObraDigital: idObra,
+              idCategoria
+            })
+          );
+          return forkJoin(requests);
+        })
+      ).subscribe({
         next: () => {
           
         },
