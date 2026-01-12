@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, NgForm, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { MarcoMaderaComponent } from '../../components/marco-madera/marco-madera.component';
 import { BtnPrimary } from "../../components/btn-primary/btn-primary";
@@ -35,6 +35,7 @@ export class ModificarObra implements OnInit {
   categorias: Categoria[] = [];
   colecciones: Categoria[] = [];
   error: string = "";
+  categoriasOriginales: number[] = [];
 
   constructor(
     private categoriasService: CategoriasService,
@@ -59,24 +60,22 @@ export class ModificarObra implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      // Cargar en el forms el id del autor
       this.idAutor = Number(params.get('idAutor'));
-      this.form.patchValue({
-        idAutor: this.idAutor
-      });
-      // Cargar categorías
-      this.cargarCategorias();
+      this.form.patchValue({ idAutor: this.idAutor });
 
-      // Si estamos en modo de modificación
       const id_ = params.get('id');
+
       if (id_) {
-        let id = Number(id_);
         this.esEdicion = true;
-        this.idObraDigital = id;
-        this.cargarObra(id);
-        this.cargarCategoriasDeObra(id);
+        this.idObraDigital = Number(id_);
+
+        this.cargarObra(this.idObraDigital);
+
+        this.cargarCategoriasYSeleccionadas(this.idObraDigital);
+
       } else {
         this.esEdicion = false;
+        this.cargarCategorias();
       }
     });
   }
@@ -86,12 +85,88 @@ export class ModificarObra implements OnInit {
       this.form.patchValue(res.data);
     });
   }
+  
+  cargarCategoriasYSeleccionadas(idObra: number) {
+    this.categoriasService.getCategorias().pipe(
+      switchMap(res => {
+        console.log("categorías", res.data);
+        this.categorias = res.data;
+
+        // construir FormArray
+        this.categoriasForm.clear();
+        this.categorias.forEach(() => {
+          this.categoriasForm.push(this.fb.control(false));
+        });
+
+        this.cdr.detectChanges();
+        // ahora cargar categorías de la obra
+        return this.obraCategoriaService.getObraCategoriaPorIdObra(idObra);
+      })
+    ).subscribe({
+      next: res => {
+        const idsCategorias = res.data.map(
+          (oc: ObraCategoria) => oc.idCategoria
+        );
+
+        this.marcarCategoriasSeleccionadas(idsCategorias);
+      },
+      error: err => {
+        console.error('Error cargando categorías', err);
+        this.error = 'Error al cargar categorías';
+      }
+    });
+  }
+
+  cargarCategorias() {
+    this.categoriasService.getCategorias().subscribe({
+      next: res => {
+        console.log("categorías", res.data);
+        this.categorias = res.data;
+        this.categoriasForm.clear();
+        this.categorias.forEach(() => {
+          this.categoriasForm.push(this.fb.control(false));
+        });
+
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        this.error = 'Error al cargar categorias';
+        console.error(err);
+      }
+    });
+  }
+
+  get categoriasForm(): FormArray {
+    return this.form.get('categorias') as FormArray;
+  }
 
   cargarCategoriasDeObra(id: number) {
     this.obraCategoriaService.getObraCategoriaPorIdObra(id).subscribe(res => {
-      console.log(res.data);
-    })
+      const obraCategorias = res.data as ObraCategoria[];
+
+      this.categoriasOriginales = obraCategorias.map(oc => oc.idCategoria);
+
+      // marcar checkboxes
+      obraCategorias.forEach(oc => {
+        const index = this.categorias.findIndex(c => c.idCategoria === oc.idCategoria);
+        if (index !== -1) {
+          this.categoriasForm.at(index).setValue(true);
+        }
+      });
+
+      this.cdr.detectChanges();
+    });
   }
+
+
+  private marcarCategoriasSeleccionadas(idsCategorias: number[]) {
+    this.categorias.forEach((cat, index) => {
+      if (idsCategorias.includes(cat.idCategoria)) {
+        this.categoriasForm.at(index).setValue(true);
+      }
+    });
+  }
+
 
 
   guardar() {
@@ -148,7 +223,7 @@ export class ModificarObra implements OnInit {
         })
       ).subscribe({
         next: () => {
-          
+          this.router.navigate(['/autor/'+this.idAutor])
         },
         error: err => {
           if (err.status === 400 && err.error?.errors) {
@@ -175,10 +250,49 @@ export class ModificarObra implements OnInit {
         idAutor: this.idAutor!,
         idArchivoPrincipal: null,
       };
+
+      // Ver qué categorías se seleccionaron
+      const categoriasSeleccionadas = this.form.value.categorias
+      .map((checked: boolean, i: number) =>
+        checked ? this.categorias[i].idCategoria : null
+      )
+      .filter((v: number | null) => v !== null);
+      console.log(categoriasSeleccionadas);
+
+      const categoriasAAgregar = categoriasSeleccionadas.filter(
+        (id: number) => !this.categoriasOriginales.includes(id)
+      );
+
+      const categoriasAEliminar = this.categoriasOriginales.filter(
+        (id: number) => !categoriasSeleccionadas.includes(id)
+      );
+
+      
       if(!this.idObraDigital){
         return;
       }
-      this.obrasService.actualizarObra(this.idObraDigital, payload).subscribe({
+      this.obrasService.actualizarObra(this.idObraDigital, payload).pipe(
+        switchMap(() => {
+          const creates$ = categoriasAAgregar.map((idCat: number) =>
+            this.obraCategoriaService.crearObraCategoria({
+              idObraDigital: this.idObraDigital!,
+              idCategoria: idCat
+            })
+          );
+
+          const deletes$ = categoriasAEliminar.map(idCat =>
+            this.obraCategoriaService.eliminarObraCategoriaPorIds(
+              this.idObraDigital!,
+              idCat
+            )
+          );
+
+          return forkJoin([...creates$, ...deletes$].length
+            ? [...creates$, ...deletes$]
+            : of(null)
+          );
+        })
+      ).subscribe({
         next: () => {
           this.router.navigate(['/autor/'+this.idAutor])
         },
@@ -195,30 +309,8 @@ export class ModificarObra implements OnInit {
   }
 
 
-  cargarCategorias() {
-    this.categoriasService.getCategorias().subscribe({
-      next: res => {
-        this.categorias = res.data;
+  
 
-        this.categoriasForm.clear();
-
-        this.categorias.forEach(() => {
-          this.categoriasForm.push(this.fb.control(false));
-        });
-
-        this.cdr.detectChanges();
-      },
-      error: err => {
-        this.error = 'Error al cargar categorias';
-        console.error(err);
-      }
-    });
-  }
-
-
-  get categoriasForm() {
-  return this.form.get('categorias') as any;
-}
 
 
   cargarColecciones() {
