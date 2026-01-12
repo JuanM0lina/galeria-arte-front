@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BtnPrimary } from "../../components/btn-primary/btn-primary";
+import { BtnReporteComponent } from '../../components/btn-reporte/btn-reporte.component';
 
 @Component({
   selector: 'app-autores',
@@ -18,7 +19,8 @@ import { BtnPrimary } from "../../components/btn-primary/btn-primary";
     NgIf,
     NgFor,
     RouterModule,
-    BtnPrimary
+    BtnPrimary,
+    BtnReporteComponent,
 ],
   templateUrl: './autores.html',
   styleUrl: './autores.scss',

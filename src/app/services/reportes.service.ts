@@ -23,6 +23,10 @@ export class ReportesService {
     });
   }
 
+  generarReporteAutores() {
+    this.descargarPDF(`${this.URL}/autores`, 'Reporte_Autores.pdf');
+  }
+
   generarReporteCategorias() {
     this.descargarPDF(`${this.URL}/categorias`, 'Reporte_Categorias.pdf');
   }
