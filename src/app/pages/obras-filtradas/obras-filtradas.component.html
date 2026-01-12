@@ -16,6 +16,8 @@
           [tipo]="tipoFiltro" 
           [id]="idFiltro">
         </app-btn-reporte>
+
+      <h2 id="titulo">{{ subtituloPagina }}</h2>
     </div>
 
     <div *ngIf="cargando" class="status-msg">
@@ -51,9 +53,10 @@
               <small>Autor: <strong>{{ obra.autor.nombreCompleto }}</strong></small>
             </div>
 
-            <button class="btn-remove" (click)="eliminarDeColeccion(obra)">
+            <button class="btn-remove" (click)="eliminar(obra)">
               Quitar
             </button>
+
 
           </div>
 
@@ -62,7 +65,7 @@
     </div>
 
     <!-- =============================== -->
-    <!-- OBRAS DISPONIBLES PARA AÑADIR -->
+    <!-- OBRAS DISPONIBLES PARA AÑADIR   -->
     <!-- =============================== -->
 
     <div class="separador">
@@ -117,9 +120,10 @@
             <p>{{ obra.descripcion }}</p>
 
             <!-- botón futuro -->
-            <button class="btn-add" (click)="agregarAColeccion(obra)">
+            <button class="btn-add" (click)="agregar(obra)">
               Añadir
             </button>
+
 
           </div>
 

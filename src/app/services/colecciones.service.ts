@@ -9,6 +9,13 @@ export class ColeccionesService {
 
   constructor(private http: HttpClient) {}
 
+  getColeccionPorId(id: number) {
+    return this.http.get<ApiResponse<Coleccion>>(
+      `${this.URL}/${id}`,
+      { headers: { 'Cache-Control': 'no-cache' } }
+    );
+  }
+
   getColecciones() {
     return this.http.get<ApiResponse<Coleccion[]>>(this.URL);
   }

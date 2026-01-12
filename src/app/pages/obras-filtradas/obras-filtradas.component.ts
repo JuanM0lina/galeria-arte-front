@@ -12,6 +12,9 @@ import { ArchivoDigital } from '../../models/archivo-digital.model';
 import { forkJoin, of, switchMap } from 'rxjs';
 import { ArchivoDigitalService } from '../../services/archivo-digital.service';
 import { ColeccionObraService } from '../../services/coleccion-obra.service';
+import { ObraCategoriaService } from '../../services/obra-categoria.service';
+import { CategoriasService } from '../../services/categorias.service';
+import { ColeccionesService } from '../../services/colecciones.service';
 
 @Component({
   selector: 'app-obras-filtradas',
@@ -30,6 +33,7 @@ import { ColeccionObraService } from '../../services/coleccion-obra.service';
 export class ObrasFiltradasComponent implements OnInit {
   
   tituloPagina = 'Obras';
+  subtituloPagina = '';
   cargando = true;
 
   tipoFiltro: 'obras-categoria' | 'obras-coleccion' | null = null;
@@ -56,7 +60,10 @@ export class ObrasFiltradasComponent implements OnInit {
     private route: ActivatedRoute,
     private obrasService: ObrasDigitalesService,
     private coleccionObraService: ColeccionObraService,
+    private obraCategoriaService: ObraCategoriaService,
     private archivoDigitalService: ArchivoDigitalService,
+    private categoriaService: CategoriasService,
+    private coleccionService: ColeccionesService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -65,16 +72,57 @@ export class ObrasFiltradasComponent implements OnInit {
       const tipo = params.get('tipo');
       const id = Number(params.get('id'));
 
+      if (!tipo || !id) return;
+
       if (tipo === 'coleccion') {
+        this.tituloPagina = 'Obras por Colección';
         this.tipoFiltro = 'obras-coleccion';
         this.idFiltro = id;
-        this.cargarVistaColeccion(id);
-      }
 
-      // ⛔ NO implementar categorías todavía
+        this.cargarSubtitulo('coleccion', id);
+        this.cargarVistaColeccion(id);
+
+      } else if (tipo === 'categoria') {
+        this.tituloPagina = 'Obras por Categoría';
+        this.tipoFiltro = 'obras-categoria';
+        this.idFiltro = id;
+
+        this.cargarSubtitulo('categoria', id);
+        this.cargarVistaCategoria(id);
+      }
     });
   }
-  
+
+
+  private cargarSubtitulo(tipo: 'categoria' | 'coleccion', id: number) {
+    if (tipo === 'categoria') {
+      this.categoriaService.getCategoriaPorId(id).subscribe({
+        next: res => {
+          this.subtituloPagina = res.data.nombreCategoria;
+          this.cdr.detectChanges();
+        },
+        error: err => {
+          console.error('Error cargando categoría', err);
+          this.subtituloPagina = '';
+        }
+      });
+    }
+
+    if (tipo === 'coleccion') {
+      this.coleccionService.getColeccionPorId(id).subscribe({
+        next: res => {
+          this.subtituloPagina = res.data.nombreColeccion;
+          this.cdr.detectChanges();
+        },
+        error: err => {
+          console.error('Error cargando colección', err);
+          this.subtituloPagina = '';
+        }
+      });
+    }
+  }
+
+
   cargarVistaColeccion(idColeccion: number) {
     this.cargando = true;
 
@@ -84,18 +132,18 @@ export class ObrasFiltradasComponent implements OnInit {
     }).pipe(
       switchMap(({ obrasColeccion, todasLasObras }) => {
 
-        // 1️⃣ Crear mapa de TODAS las obras completas
+        // Crear mapa de TODAS las obras completas
         this.obrasMap.clear();
         (todasLasObras.data || []).forEach(obra => {
           this.obrasMap.set(obra.idObraDigital, obra);
         });
 
-        // 2️⃣ Reconstruir obras de la colección con datos completos
+        // Reconstruir obras de la colección con datos completos
         this.obrasFiltradas = (obrasColeccion.data || [])
           .map(o => this.obrasMap.get(o.idObraDigital))
           .filter((o): o is ObraDigital => !!o);
 
-        // 3️⃣ Obras disponibles
+        // Obras disponibles
         const idsEnColeccion = this.obrasFiltradas.map(o => o.idObraDigital);
 
         this.obrasDisponibles = (todasLasObras.data || [])
@@ -104,7 +152,7 @@ export class ObrasFiltradasComponent implements OnInit {
         this.obrasDisponiblesFiltradas = [...this.obrasDisponibles];
         this.paginarDisponibles();
 
-        // 4️⃣ Archivos (igual que antes)
+        // Archivos (igual que antes)
         const idsArchivos = [...this.obrasFiltradas, ...this.obrasDisponibles]
           .map(o => o.idArchivoPrincipal)
           .filter(id => id != null) as number[];
@@ -136,37 +184,64 @@ export class ObrasFiltradasComponent implements OnInit {
   }
 
 
-  agregarAColeccion(obra: ObraDigital) {
-    if (!this.idFiltro) return;
+  cargarVistaCategoria(idCategoria: number) {
+    this.cargando = true;
 
-    this.coleccionObraService.crearObraCategoria({
-      idObraDigital: obra.idObraDigital,
-      idColeccion: this.idFiltro // (nombre se corrige luego)
-    }).subscribe({
-      next: () => {
-        this.obrasFiltradas.push(obra);
-        this.obrasDisponibles =
-          this.obrasDisponibles.filter(o => o.idObraDigital !== obra.idObraDigital);
+    forkJoin({
+      obrasCategoria: this.obraCategoriaService.getObrasPorIdCategoria(idCategoria),
+      todasLasObras: this.obrasService.getObras()
+    }).pipe(
+      switchMap(({ obrasCategoria, todasLasObras }) => {
 
-        this.filtrarDisponibles();
+        // Crear mapa de TODAS las obras completas
+        this.obrasMap.clear();
+        (todasLasObras.data || []).forEach(obra => {
+          this.obrasMap.set(obra.idObraDigital, obra);
+        });
+
+        // Reconstruir obras de la colección con datos completos
+        this.obrasFiltradas = (obrasCategoria.data || [])
+          .map(o => this.obrasMap.get(o.idObraDigital))
+          .filter((o): o is ObraDigital => !!o);
+
+        // Obras disponibles
+        const idsEnColeccion = this.obrasFiltradas.map(o => o.idObraDigital);
+
+        this.obrasDisponibles = (todasLasObras.data || [])
+          .filter(o => !idsEnColeccion.includes(o.idObraDigital));
+
+        this.obrasDisponiblesFiltradas = [...this.obrasDisponibles];
+        this.paginarDisponibles();
+
+        // Archivos (igual que antes)
+        const idsArchivos = [...this.obrasFiltradas, ...this.obrasDisponibles]
+          .map(o => o.idArchivoPrincipal)
+          .filter(id => id != null) as number[];
+
+        const unicos = [...new Set(idsArchivos)];
+        if (!unicos.length) return of([]);
+
+        return forkJoin(
+          unicos.map(id =>
+            this.archivoDigitalService.getArchivoPorId(id)
+          )
+        );
+      })
+    ).subscribe({
+      next: archivos => {
+        archivos.forEach(res => {
+          const archivo = res.data;
+          this.archivosMap.set(archivo.idArchivo, archivo);
+        });
+
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        console.error(err);
+        this.cargando = false;
       }
     });
-  }
-
-  eliminarDeColeccion(obra: ObraDigital) {
-    if (!this.idFiltro) return;
-
-    this.coleccionObraService
-      .eliminarObraCategoriaPorIds(this.idFiltro, obra.idObraDigital)
-      .subscribe({
-        next: () => {
-          this.obrasFiltradas =
-            this.obrasFiltradas.filter(o => o.idObraDigital !== obra.idObraDigital);
-
-          this.obrasDisponibles.push(obra);
-          this.filtrarDisponibles();
-        }
-      });
   }
 
   cargarYFiltrar(tipo: string | null, id: number) {
@@ -279,4 +354,92 @@ export class ObrasFiltradasComponent implements OnInit {
   }
 
   volver() { window.history.back(); }
+
+  // ----- agregar y eliminar
+
+  agregar(obra: ObraDigital) {
+    if (!this.idFiltro || !this.tipoFiltro) return;
+
+    if (this.tipoFiltro === 'obras-coleccion') {
+      this.agregarAColeccion(obra);
+    } else if (this.tipoFiltro === 'obras-categoria') {
+      this.agregarACategoria(obra);
+    }
+  }
+
+  eliminar(obra: ObraDigital) {
+    if (!this.idFiltro || !this.tipoFiltro) return;
+
+    if (this.tipoFiltro === 'obras-coleccion') {
+      this.eliminarDeColeccion(obra);
+    } else if (this.tipoFiltro === 'obras-categoria') {
+      this.eliminarDeCategoria(obra);
+    }
+  }
+
+  agregarAColeccion(obra: ObraDigital) {
+    if (!this.idFiltro) return;
+
+    this.coleccionObraService.crearColeccionObra({
+      idObraDigital: obra.idObraDigital,
+      idColeccion: this.idFiltro
+    }).subscribe({
+      next: () => {
+        this.obrasFiltradas.push(obra);
+        this.obrasDisponibles =
+          this.obrasDisponibles.filter(o => o.idObraDigital !== obra.idObraDigital);
+
+        this.filtrarDisponibles();
+      }
+    });
+  }
+
+  eliminarDeColeccion(obra: ObraDigital) {
+    if (!this.idFiltro) return;
+
+    this.coleccionObraService
+      .eliminarColeccionObraPorIds(this.idFiltro, obra.idObraDigital)
+      .subscribe({
+        next: () => {
+          this.obrasFiltradas =
+            this.obrasFiltradas.filter(o => o.idObraDigital !== obra.idObraDigital);
+
+          this.obrasDisponibles.push(obra);
+          this.filtrarDisponibles();
+        }
+      });
+  }
+
+  agregarACategoria(obra: ObraDigital) {
+    this.obraCategoriaService.crearObraCategoria({
+      idObraDigital: obra.idObraDigital,
+      idCategoria: this.idFiltro!
+    }).subscribe({
+      next: () => {
+        this.obrasFiltradas.push(obra);
+        this.obrasDisponibles =
+          this.obrasDisponibles.filter(o => o.idObraDigital !== obra.idObraDigital);
+        this.filtrarDisponibles();
+      }
+    });
+  }
+
+  eliminarDeCategoria(obra: ObraDigital) {
+    if (!this.idFiltro) return;
+
+    this.obraCategoriaService
+      .eliminarObraCategoriaPorIds(obra.idObraDigital, this.idFiltro, )
+      .subscribe({
+        next: () => {
+          this.obrasFiltradas =
+            this.obrasFiltradas.filter(o => o.idObraDigital !== obra.idObraDigital);
+
+          this.obrasDisponibles.push(obra);
+          this.filtrarDisponibles();
+        },
+        error: err => {
+          console.error(err);
+        }
+      });
+  }
 }

@@ -16,7 +16,7 @@ export class ColeccionObraService {
 
   constructor(private http: HttpClient) {}
 
-  crearObraCategoria(datos: CrearColeccionObraDTO) {
+  crearColeccionObra(datos: CrearColeccionObraDTO) {
     return this.http.post<ApiResponse<null>>(
       this.URL,
       datos,
@@ -52,7 +52,7 @@ export class ColeccionObraService {
     );
   }
 
-  eliminarObraCategoriaPorIds(idColeccion: number, idObra: number) {
+  eliminarColeccionObraPorIds(idColeccion: number, idObra: number) {
     return this.http.delete<ApiResponse<null>>(
       `${this.URL}/coleccion/${idColeccion}/obra/${idObra}`,
       { headers: { 'Cache-Control': 'no-cache' } }

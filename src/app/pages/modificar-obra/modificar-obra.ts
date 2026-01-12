@@ -129,11 +129,11 @@ export class ModificarObra implements OnInit {
 
         this.cdr.detectChanges();
         // ahora cargar categorías de la obra
-        return this.obraCategoriaService.getObraCategoriaPorIdObra(idObra);
+        return this.obraCategoriaService.getCategoriasPorIdObra(idObra);
       })
     ).subscribe({
-      next: res => {
-        const idsCategorias = res.data.map(
+      next: (res: any) => {
+        const idsCategorias: number[] = res.data.map(
           (oc: ObraCategoria) => oc.idCategoria
         );
 
@@ -194,8 +194,8 @@ export class ModificarObra implements OnInit {
   }
 
   cargarCategoriasDeObra(id: number) {
-    this.obraCategoriaService.getObraCategoriaPorIdObra(id).subscribe(res => {
-      const obraCategorias = res.data as ObraCategoria[];
+    this.obraCategoriaService.getCategoriasPorIdObra(id).subscribe(res => {
+      const obraCategorias = res.data as unknown as ObraCategoria[];
 
       this.categoriasOriginales = obraCategorias.map(oc => oc.idCategoria);
 

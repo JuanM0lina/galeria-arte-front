@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '../models/api-response.model';
 import { ObraCategoria } from '../models/obra-categoria.model';
+import { Categoria } from '../models/categoria.model';
+import { ObraDigital } from '../models/obra-digital.model';
 
 export interface CrearObraCategoriaDTO {
   idObraDigital: number;
@@ -36,20 +38,20 @@ export class ObraCategoriaService {
     );
   }
 
-  getObraCategoriaPorIdCategoria(idCat: number) {
-    return this.http.get<ApiResponse<ObraCategoria[]>>(
-      `${this.URL}/categoria/${idCat}`,
-      { headers: { 'Cache-Control': 'no-cache' } }
-    );
-  }
-
-  getObraCategoriaPorIdObra(idObra: number) {
-    return this.http.get<ApiResponse<ObraCategoria[]>>(
+  getCategoriasPorIdObra(idObra: number) {
+    return this.http.get<ApiResponse<Categoria[]>>(
       `${this.URL}/obra/${idObra}`,
       { headers: { 'Cache-Control': 'no-cache' } }
     );
   }
-
+  
+  getObrasPorIdCategoria(idCat: number) {
+    return this.http.get<ApiResponse<ObraDigital[]>>(
+      `${this.URL}/categoria/${idCat}`,
+      { headers: { 'Cache-Control': 'no-cache' } }
+    );
+  }
+  
   eliminarObraCategoriaPorIds(idObra: number, idCat: number) {
     return this.http.delete<ApiResponse<null>>(
       `${this.URL}/obra/${idObra}/categoria/${idCat}`,
