@@ -32,7 +32,6 @@ export class ObrasDigitalesService {
     );
   }
 
-
   getObras() {
     return this.http.get<ApiResponse<ObraDigital[]>>(this.URL);
   }

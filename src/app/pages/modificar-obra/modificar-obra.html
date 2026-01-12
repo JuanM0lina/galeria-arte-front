@@ -44,14 +44,14 @@
       <div class="form-field">
         <h3>Categorías</h3>
 
-        <div class="categorias-grid">
+        <div formArrayName="categorias" class="categorias-grid">
           <label
           class="categoria-item"
           *ngFor="let categoria of categorias; let i = index">
 
           <input
               type="checkbox"
-              [formControl]="categoriasForm.controls[i]" />
+              [formControlName]="i" />
 
           <span>{{ categoria.nombreCategoria }}</span>
 
