@@ -7,6 +7,7 @@ import { MarcoPapelComponent } from '../../components/marco-papel/marco-papel.co
 import { ColeccionesService } from '../../services/colecciones.service';
 import { Coleccion } from '../../models/coleccion.model';
 import { BtnPrimary } from '../../components/btn-primary/btn-primary';
+import { BtnReporteComponent } from '../../components/btn-reporte/btn-reporte.component';
 
 @Component({
   selector: 'app-colecciones',
@@ -14,10 +15,11 @@ import { BtnPrimary } from '../../components/btn-primary/btn-primary';
   imports: [
     CommonModule,
     MarcoMaderaComponent,
-      MarcoPapelComponent,
-      FormsModule,
-      BtnPrimary
-    ],
+    MarcoPapelComponent,
+    FormsModule,
+    BtnPrimary,
+    BtnReporteComponent
+  ],
   templateUrl: './colecciones.component.html',
   styleUrl: './colecciones.component.scss'
 })
@@ -51,7 +53,6 @@ export class ColeccionesComponent implements OnInit {
     return this.coleccionesFiltradas.slice(inicio, inicio + this.itemsPorPagina);
   }
 
-  // SOLUCIÓN AL ERROR MATH:
   get totalPaginas(): number {
     return Math.ceil(this.coleccionesFiltradas.length / this.itemsPorPagina);
   }
@@ -64,7 +65,9 @@ export class ColeccionesComponent implements OnInit {
     if (this.paginaActual > 0) this.paginaActual--;
   }
 
-  onSearch() { this.paginaActual = 0; }
+  onSearch() {
+    this.paginaActual = 0;
+  }
 
   verObras(id: number) {
     this.router.navigate(['/obras-filtradas', 'coleccion', id]);
