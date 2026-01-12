@@ -5,11 +5,12 @@ import { MarcoMaderaComponent } from '../../components/marco-madera/marco-madera
 import { MarcoPapelComponent } from '../../components/marco-papel/marco-papel.component';
 import { ObrasDigitalesService } from '../../services/obras.service';
 import { ObraDigital } from '../../models/obra-digital.model';
+import { BtnReporteComponent } from '../../components/btn-reporte/btn-reporte.component';
 
 @Component({
   selector: 'app-obras-filtradas',
   standalone: true,
-  imports: [CommonModule, MarcoMaderaComponent, MarcoPapelComponent],
+  imports: [CommonModule, MarcoMaderaComponent, MarcoPapelComponent, BtnReporteComponent],
   templateUrl: './obras-filtradas.component.html',
   styleUrl: './obras-filtradas.component.scss'
 })
@@ -17,6 +18,9 @@ export class ObrasFiltradasComponent implements OnInit {
   obrasFiltradas: ObraDigital[] = [];
   tituloPagina = 'Obras';
   cargando = true;
+
+  tipoFiltro: 'obras-categoria' | 'obras-coleccion' | null = null;
+  idFiltro: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -27,13 +31,21 @@ export class ObrasFiltradasComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const tipo = params.get('tipo');
       const id = Number(params.get('id'));
+      
+      if (tipo === 'categoria') {
+        this.tipoFiltro = 'obras-categoria';
+        this.idFiltro = id;
+      } else if (tipo === 'coleccion') {
+        this.tipoFiltro = 'obras-coleccion';
+        this.idFiltro = id;
+      }
+
       this.cargarYFiltrar(tipo, id);
     });
   }
 
   cargarYFiltrar(tipo: string | null, id: number) {
     this.cargando = true;
-
     this.obrasService.getObras().subscribe({
       next: (res) => {
         const todas = res.data || [];
@@ -46,11 +58,6 @@ export class ObrasFiltradasComponent implements OnInit {
           {
             idObraDigital: 101, titulo: 'Mona Lisa Pixel', descripcion: 'Obra maestra en 8 bits.', fechaPublicacion: '2024-01-01', idAutor: 1, idArchivoPrincipal: null,
             categoria: { idCategoria: 1, nombreCategoria: 'Pixel Art' },
-            coleccion: { idColeccion: 1, nombreColeccion: 'Renacimiento 8-Bits' }
-          },
-          {
-            idObraDigital: 102, titulo: 'David Voxel', descripcion: 'Escultura digital.', fechaPublicacion: '2024-02-15', idAutor: 1, idArchivoPrincipal: null,
-            categoria: { idCategoria: 2, nombreCategoria: 'Escultura Digital' },
             coleccion: { idColeccion: 1, nombreColeccion: 'Renacimiento 8-Bits' }
           }
         ];
