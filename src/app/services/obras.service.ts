@@ -48,4 +48,12 @@ export class ObrasDigitalesService {
       { headers: { 'Cache-Control': 'no-cache' } }
     );
   }
+
+  eliminarObra(id: number) {
+    return this.http.delete<ApiResponse<null>>(
+      `${this.URL}/${id}`,
+      { headers: { 'Cache-Control': 'no-cache' } }
+    );
+  }
+
 }

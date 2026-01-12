@@ -13,6 +13,8 @@ import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { BtnPrimary } from "../../components/btn-primary/btn-primary";
 import { BtnDelete } from "../../components/btn-delete/btn-delete";
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-autor',
@@ -87,7 +89,7 @@ export class AutorPage implements OnInit {
         console.error(err);
       }
     })
-  }   
+  }
 
   modificarAutor() {
     this.router.navigate(['/modificar-autor', this.idAutor]);
@@ -128,7 +130,51 @@ export class AutorPage implements OnInit {
   editarObra(id: number) {
     this.router.navigate(['/autor', this.idAutor,'modificar-obra', id]);
   }
-  eliminarObra(id: number) {}
+  eliminarObra(id: number) {
+    Swal.fire({
+      title: '¿Eliminar obra?',
+      text: 'Esta acción no se puede deshacer',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#b91c1c',
+      cancelButtonColor: '#6b7280'
+    }).then(result => {
+
+      if (!result.isConfirmed) return;
+
+      this.obrasDigitalesService.eliminarObra(id).subscribe({
+        next: () => {
+          this.obrasDigitales = this.obrasDigitales.filter(
+            obra => obra.idObraDigital !== id
+          );
+
+          this.cdr.detectChanges();
+
+          Swal.fire({
+            title: 'Eliminada',
+            text: 'La obra fue eliminada correctamente',
+            icon: 'success',
+            timer: 1800,
+            showConfirmButton: false
+          });
+        },
+        error: err => {
+          console.error(err);
+
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo eliminar la obra',
+            icon: 'error'
+          });
+        }
+      });
+
+    });
+  }
+
+
   verObra(id: number) {}
 
 
