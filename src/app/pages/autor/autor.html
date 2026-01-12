@@ -46,7 +46,15 @@
           <!-- Imagen -->
           <div class="obra-image">
             <!-- Placeholder por ahora -->
-            <img src="assets/image-placeholder.webp" alt="Obra digital" />
+            <img
+              *ngIf="obra.idArchivoPrincipal && archivosMap.get(obra.idArchivoPrincipal)?.formato?.startsWith('image/')"
+              [src]="getRutaArchivo(archivosMap.get(obra.idArchivoPrincipal)?.ruta!)"
+            />
+
+            <img
+              *ngIf="!obra.idArchivoPrincipal || !archivosMap.get(obra.idArchivoPrincipal)"
+              src="assets/image-placeholder.webp"
+            />
           </div>
 
           <!-- Info -->

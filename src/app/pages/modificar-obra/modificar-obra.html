@@ -14,62 +14,98 @@
       </ul>
     </div>
 
-    <form [formGroup]="form" (ngSubmit)="guardar()" class="obra-form">
+    <div class="obra-form-wrapper">
 
-      <div class="form-field" *ngIf="esEdicion">
-        <h3>ID de la obra digital</h3>
-        <input formControlName="idObraDigital" readonly />
-      </div>
-
-      <div class="form-field">
-        <h3>ID del autor</h3>
-        <input formControlName="idAutor" readonly/>
-      </div>
-
-      <div class="form-field">
-        <h3>Título</h3>
-        <input formControlName="titulo" placeholder="Título" />
-      </div>
-
-      <div class="form-field">
-        <h3>Descripción</h3>
-        <input formControlName="descripcion" placeholder="Descripción" />
-      </div>
-
-      <div class="form-field">
-        <h3>Fecha de publicación</h3>
-        <input formControlName="fechaPublicacion" placeholder="Fecha de publicación" type="date"/>
-      </div>
-
-      <div class="form-field">
-        <h3>Categorías</h3>
-
-        <div formArrayName="categorias" class="categorias-grid">
-          <label
-          class="categoria-item"
-          *ngFor="let categoria of categorias; let i = index">
-
-          <input
-              type="checkbox"
-              [formControlName]="i" />
-
-          <span>{{ categoria.nombreCategoria }}</span>
-
-          </label>
+      <form [formGroup]="form" class="obra-form">
+        <div class="form-field" *ngIf="esEdicion">
+          <h3>ID de la obra digital</h3>
+          <input formControlName="idObraDigital" readonly />
         </div>
+        <div class="form-field">
+          <h3>ID del autor</h3>
+          <input formControlName="idAutor" readonly/>
+        </div>
+        <div class="form-field">
+          <h3>Título</h3>
+          <input formControlName="titulo" placeholder="Título" />
+        </div>
+        <div class="form-field">
+          <h3>Descripción</h3>
+          <input formControlName="descripcion" placeholder="Descripción" />
+        </div>
+        <div class="form-field">
+          <h3>Fecha de publicación</h3>
+          <input formControlName="fechaPublicacion" placeholder="Fecha de publicación" type="date"/>
+        </div>
+        <div class="form-field">
+          <h3>Categorías</h3>
+  
+          <div formArrayName="categorias" class="categorias-grid">
+            <label
+              class="categoria-item"
+              *ngFor="let categoria of categorias; let i = index"
+            >
+              <input
+                  type="checkbox"
+                  [formControlName]="i" />
+              <span>{{ categoria.nombreCategoria }}</span>
+            </label>
+          </div>
+        </div>
+        
+      </form>
+
+      <div class="form-field">
+        <h3>Archivo digital</h3>
+
+        <!-- Archivo existente -->
+        <div *ngIf="true">
+          
+          <div *ngIf="esImagenSeleccionada">
+            <img [src]="previewUrl" style="max-width: 300px;">
+          </div>
+
+          <div *ngIf="!esImagenSeleccionada">
+            <div *ngIf="esEdicion">
+              <a *ngIf="!archivoEliminado && archivoActual" [href]="getRutaArchivo(archivoActual.ruta)" target="_blank">
+                {{ archivoActual.ruta.split('/').pop() }}
+              </a>
+              <a *ngIf="archivoEliminado && archivoSeleccionado" [href]="'archivos/'+archivoSeleccionado.name" target="_blank">
+                {{archivoSeleccionado.name}}
+              </a>
+            </div>
+            
+          </div>
+
+          
+
+        </div>
+
+        <button
+          *ngIf="(!esEdicion && (archivoSeleccionado)) || (esEdicion && ((archivoEliminado && archivoSeleccionado) || (!archivoEliminado)))"
+          type="button" class="btn-delete" (click)="eliminarArchivoActual()">
+          Eliminar archivo
+        </button>
+
+        <!-- Reemplazar -->
+        <input
+          *ngIf="(!esEdicion && (!archivoSeleccionado)) || (esEdicion && ((archivoEliminado && !archivoSeleccionado)))"
+          type="file"
+          (change)="onArchivoSeleccionado($event)"
+          accept="*/*" />
       </div>
 
-
+      
       <div class="div_submit">
         <app-btn-primary
           [label]="esEdicion ? 'Guardar cambios' : 'Registrar obra digital'"
           type="submit"
-          [disabled]="form.invalid">
+          [disabled]="form.invalid"
+          (click)="guardar()">
         </app-btn-primary>
       </div>
 
-    </form>
-
+    </div>
 
   </div>
 

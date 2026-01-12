@@ -11,7 +11,9 @@ import { ObraDigital } from '../../models/obra-digital.model';
 import { ObrasDigitalesService } from '../../services/obras.service';
 import { ObraCategoria } from '../../models/obra-categoria.model';
 import { ObraCategoriaService } from '../../services/obra-categoria.service';
-import { forkJoin, switchMap, of } from 'rxjs';
+import { forkJoin, switchMap, of, map } from 'rxjs';
+import { ArchivoDigitalService } from '../../services/archivo-digital.service';
+import { ArchivoDigital } from '../../models/archivo-digital.model';
 
 @Component({
   selector: 'app-modificar-obra',
@@ -36,11 +38,20 @@ export class ModificarObra implements OnInit {
   colecciones: Categoria[] = [];
   error: string = "";
   categoriasOriginales: number[] = [];
+  obradigital?: ObraDigital;
+
+  // archivo
+  archivoEliminado = false;
+  archivoActual?: ArchivoDigital;
+  archivoSeleccionado?: File;
+  previewUrl?: string;
+  esImagenSeleccionada = false;
 
   constructor(
     private categoriasService: CategoriasService,
     private obrasService: ObrasDigitalesService,
     private obraCategoriaService: ObraCategoriaService,
+    private archivoDigitalService: ArchivoDigitalService,
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
@@ -81,10 +92,28 @@ export class ModificarObra implements OnInit {
   }
 
   cargarObra(id: number) {
-    this.obrasService.getObraPorID(id).subscribe(res => {
-      this.form.patchValue(res.data);
+    this.obrasService.getObraPorID(id).subscribe({
+      next: res => {
+        this.obradigital = res.data;
+        
+        this.form.patchValue({
+          idObraDigital: this.obradigital.idObraDigital,
+          titulo: this.obradigital.titulo,
+          descripcion: this.obradigital.descripcion,
+          fechaPublicacion: this.obradigital.fechaPublicacion,
+          idArchivoPrincipal: this.obradigital.idArchivoPrincipal
+        });
+        console.log(this.obradigital)
+        // Cargar archivo
+        if (this.obradigital.idArchivoPrincipal) {
+          this.cargarArchivo(this.obradigital.idArchivoPrincipal);
+        }
+
+        this.cdr.detectChanges();
+      }
     });
   }
+
   
   cargarCategoriasYSeleccionadas(idObra: number) {
     this.categoriasService.getCategorias().pipe(
@@ -136,6 +165,30 @@ export class ModificarObra implements OnInit {
     });
   }
 
+  cargarArchivo(idArchivo: number) {
+    this.archivoDigitalService.getArchivoPorId(idArchivo).subscribe({
+      next: res => {
+        this.archivoActual = res.data;
+        console.log("archivoactual", this.archivoActual);
+        this.esImagenSeleccionada =
+          this.archivoActual.formato.startsWith('image/');
+
+        if (this.esImagenSeleccionada) {
+          this.previewUrl = this.getRutaArchivo(this.archivoActual.ruta);
+        }
+
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        console.error('Error cargando archivo digital', err);
+      }
+    });
+  }
+
+  getRutaArchivo(ruta: string): string {
+    return ruta.replace('./', '/');
+  }
+  
   get categoriasForm(): FormArray {
     return this.form.get('categorias') as FormArray;
   }
@@ -173,15 +226,21 @@ export class ModificarObra implements OnInit {
     this.erroresBackend = [];
 
     if (this.form.invalid) return;
-
+    const raw = this.form.value;
+    if(!raw.fechaPublicacion) {
+      this.erroresBackend.push('Fecha de publicación inválida');
+      return;
+    }
+    if(!raw.titulo) {
+      this.erroresBackend.push('Es necesario un título');
+      return;
+    }
+    // Creación
     if (!this.esEdicion) {
-      // Creación
-      const raw = this.form.value;
-      if(!raw.fechaPublicacion) {
-        this.erroresBackend.push('Fecha de publicación inválida');
+      if(!this.archivoSeleccionado) {
+        this.erroresBackend.push('No hay archivo seleccionado');
         return;
       }
-
       // Setear los datos en un dummy
       const payload = {
         titulo: raw.titulo,
@@ -202,28 +261,60 @@ export class ModificarObra implements OnInit {
 
       // Crear la obra
       this.obrasService.crearObra(payload).pipe(
+
         switchMap(res => {
           const obra = res.data as unknown as ObraDigital;
-          if (!obra) {
-            throw new Error('Error: No se pudo crear la obra');
-          }
-          const idObra = obra.idObraDigital;
+          if (!obra) throw new Error('No se creó la obra');
 
-          if (!categoriasSeleccionadas.length) {
-            return of(null);
-          }
-          // Crear requests ObraCategoria
-          const requests = categoriasSeleccionadas.map((idCategoria: any) =>
-            this.obraCategoriaService.crearObraCategoria({
-              idObraDigital: idObra,
-              idCategoria
-            })
-          );
-          return forkJoin(requests);
+          const idObra = obra.idObraDigital;
+          console.log('se creó obra', idObra);
+          // Categorías
+          const categorias$ = categoriasSeleccionadas.length
+            ? forkJoin(
+                categoriasSeleccionadas.map((idCategoria: number) =>
+                  this.obraCategoriaService.crearObraCategoria({
+                    idObraDigital: idObra,
+                    idCategoria
+                  })
+                )
+              )
+            : of(null);
+          
+          return categorias$.pipe(map(() => obra));
+        }),
+
+        switchMap(async obra => {
+          console.log('segundo map', obra);
+          if (!this.archivoSeleccionado) return { obra, archivo: null };
+          
+          const checksum = await this.calcularChecksum(this.archivoSeleccionado);
+          
+          return this.archivoDigitalService.crearArchivoDigital({
+            ruta: `./archivos/${this.archivoSeleccionado.name}`,
+            formato: this.archivoSeleccionado.type,
+            checksum,
+            idObraDigital: obra.idObraDigital
+          }).pipe(
+            map(res => ({ obra, archivo: res.data }))
+          ).toPromise();
+        }),
+
+        switchMap((result) => {
+          if (!result || !result.obra) return of(null);
+
+          const { obra, archivo } = result;
+          if (!archivo) return of(null);
+
+          console.log('Archivo creado:', archivo);
+
+          return this.obrasService.actualizarObra(obra.idObraDigital, {
+            ...payload,
+            idArchivoPrincipal: archivo.idArchivo
+          });
         })
       ).subscribe({
         next: () => {
-          this.router.navigate(['/autor/'+this.idAutor])
+          //this.router.navigate(['/autor/'+this.idAutor])
         },
         error: err => {
           if (err.status === 400 && err.error?.errors) {
@@ -235,11 +326,17 @@ export class ModificarObra implements OnInit {
         }
       });
 
+    // Modificación
     } else {
-      // Modificación
       const raw = this.form.value;
       if(!raw.fechaPublicacion) {
         this.erroresBackend.push('Fecha de publicación inválida');
+        return;
+      }
+      if (this.esEdicion && this.archivoEliminado && !this.archivoSeleccionado) {
+        this.erroresBackend.push(
+          'Debes seleccionar un nuevo archivo después de eliminar el actual'
+        );
         return;
       }
       // Setear los datos en un dummy
@@ -248,7 +345,7 @@ export class ModificarObra implements OnInit {
         descripcion: raw.descripcion,
         fechaPublicacion: raw.fechaPublicacion,
         idAutor: this.idAutor!,
-        idArchivoPrincipal: null,
+        idArchivoPrincipal: this.obradigital?.idArchivoPrincipal ?? null,
       };
 
       // Ver qué categorías se seleccionaron
@@ -291,6 +388,35 @@ export class ModificarObra implements OnInit {
             ? [...creates$, ...deletes$]
             : of(null)
           );
+        }),
+        switchMap(async () => {
+          // Caso A: no se tocó archivo
+          if (!this.archivoEliminado) {
+            console.log('no se toco el archivo')
+            return null;
+          }
+          // Caso B: se eliminó y se subió nuevo
+          console.log("this.archivoSeleccionado", this.archivoSeleccionado)
+          console.log("this.archivoActual?.idArchivo", this.archivoActual)
+          if (this.archivoSeleccionado && this.archivoActual?.idArchivo) {
+            const checksum = await this.calcularChecksum(this.archivoSeleccionado);
+            console.log('se modificará el archivo');
+
+            return this.archivoDigitalService.actualizarArchivoDigital(this.archivoActual.idArchivo, {
+              ruta: `./archivos/${this.archivoSeleccionado.name}`,
+              formato: this.archivoSeleccionado.type,
+              checksum,
+              idObraDigital: this.idObraDigital!
+            }).toPromise();
+          }
+          return null;
+        }),
+        switchMap(res => {
+          if (!res?.data) return of(null);
+
+          return this.obrasService.actualizarObra(this.idObraDigital!, {
+            ...payload,
+          });
         })
       ).subscribe({
         next: () => {
@@ -308,12 +434,47 @@ export class ModificarObra implements OnInit {
     }
   }
 
-
-  
-
-
-
   cargarColecciones() {
     
+  }
+
+  // ---- Archivos ----
+  onArchivoSeleccionado(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      this.archivoSeleccionado = undefined;
+      return
+    };
+
+    this.archivoSeleccionado = input.files[0];
+
+    this.esImagenSeleccionada = this.archivoSeleccionado.type.startsWith('image/');
+
+    if (this.esImagenSeleccionada) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result as string;
+        this.cdr.detectChanges();
+      };
+      reader.readAsDataURL(this.archivoSeleccionado);
+    } else {
+      this.previewUrl = undefined;
+    }
+  }
+
+  async calcularChecksum(file: File): Promise<string> {
+    const buffer = await file.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+    return Array.from(new Uint8Array(hashBuffer))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  eliminarArchivoActual() {
+    this.archivoEliminado = true;
+    this.archivoSeleccionado = undefined;
+    this.previewUrl = undefined;
+    this.esImagenSeleccionada = false;
+    this.cdr.detectChanges();
   }
 }

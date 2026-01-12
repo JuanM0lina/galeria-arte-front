@@ -1,0 +1,6 @@
+User-agent: (*)
+Disallow: /css/
+Disallow: /fonAwesome470/
+Disallow: /js/
+Disallow: /images/
+Disallow: //pdf$

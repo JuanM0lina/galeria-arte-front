@@ -12,4 +12,10 @@ export class BtnPrimary {
   @Input() disabled = false;
 
   @Output() click = new EventEmitter<void>();
+
+  onClick(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.click.emit();
+  }
 }

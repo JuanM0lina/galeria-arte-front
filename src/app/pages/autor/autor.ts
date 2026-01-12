@@ -14,6 +14,9 @@ import { Router } from '@angular/router';
 import { BtnPrimary } from "../../components/btn-primary/btn-primary";
 import { BtnDelete } from "../../components/btn-delete/btn-delete";
 import Swal from 'sweetalert2';
+import { ArchivoDigital } from '../../models/archivo-digital.model';
+import { forkJoin, of, switchMap } from 'rxjs';
+import { ArchivoDigitalService } from '../../services/archivo-digital.service';
 
 
 @Component({
@@ -39,11 +42,14 @@ export class AutorPage implements OnInit {
   obrasDigitales: ObraDigital[] = [];
   mostrarConfirmacion = false;
   eliminando = false;
+  archivosMap = new Map<number, ArchivoDigital>();
+
 
   constructor(
     private route: ActivatedRoute,
     private autoresService: AutoresService,
     private obrasDigitalesService: ObrasDigitalesService,
+    private archivoDigitalService: ArchivoDigitalService,
     private cdr: ChangeDetectorRef,
     private router: Router,
   ){}
@@ -76,19 +82,43 @@ export class AutorPage implements OnInit {
   }
 
   getObrasAutor(id: number) {
-    this.obrasDigitalesService.getObrasPorIdAutor(id).subscribe({
-      next: res => {
+    this.obrasDigitalesService.getObrasPorIdAutor(id).pipe(
+      switchMap(res => {
         this.obrasDigitales = res.data;
+        console.log(this.obrasDigitales)
+        const idsArchivos = this.obrasDigitales
+          .map(o => o.idArchivoPrincipal)
+          .filter(id => id != null);
+
+        if (!idsArchivos.length) {
+          return of([]);
+        }
+
+        return forkJoin(
+          idsArchivos.map(id =>
+            this.archivoDigitalService.getArchivoPorId(id!)
+          )
+        );
+      })
+    ).subscribe({
+      next: archivos => {
+        archivos.forEach(res => {
+          const archivo = res.data;
+          this.archivosMap.set(archivo.idArchivo, archivo);
+        });
         this.cargando = false;
-        console.log("Obras digitales", this.obrasDigitales);
         this.cdr.detectChanges();
       },
       error: err => {
-        this.error = 'Error al cargar obras digitales del autor';
+        this.error = 'Error al cargar obras o archivos';
         this.cargando = false;
         console.error(err);
       }
-    })
+    });
+  }
+
+  getRutaArchivo(ruta: string): string {
+    return ruta.replace('./', '/');
   }
 
   modificarAutor() {

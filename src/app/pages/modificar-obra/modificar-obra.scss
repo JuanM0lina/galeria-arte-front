@@ -68,11 +68,18 @@ marco-madera {
 }
 
 
+.obra-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 .div_submit {
   display: flex;
   justify-content: center;
   margin-top: 20px;
 }
+
 
 .error-box {
   background: rgba(150, 0, 0, 0.35);
