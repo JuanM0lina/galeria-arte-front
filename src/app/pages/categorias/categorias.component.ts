@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MarcoMaderaComponent } from '../../components/marco-madera/marco-madera.component';
 import { MarcoPapelComponent } from '../../components/marco-papel/marco-papel.component';
-import { CategoriasService } from '../../services/categorias.service';
-import { Categoria } from '../../models/categoria.model';
 import { BtnPrimary } from '../../components/btn-primary/btn-primary';
 import { BtnDelete } from '../../components/btn-delete/btn-delete';
+import { BtnReporteComponent } from '../../components/btn-reporte/btn-reporte.component';
+import { CategoriasService } from '../../services/categorias.service';
+import { Categoria } from '../../models/categoria.model';
 
 @Component({
   selector: 'app-categorias',
@@ -19,14 +20,14 @@ import { BtnDelete } from '../../components/btn-delete/btn-delete';
     FormsModule,
     BtnPrimary,
     BtnDelete,
+    BtnReporteComponent
   ],
   templateUrl: './categorias.component.html',
   styleUrl: './categorias.component.scss'
 })
 export class CategoriasComponent implements OnInit {
-  
+
   cargando = true;
-  
   categorias: Categoria[] = [];
   categoriasFiltradas: Categoria[] = [];
   datosPaginados: Categoria[] = [];
@@ -36,7 +37,6 @@ export class CategoriasComponent implements OnInit {
   terminoBusqueda = '';
 
   catEliminar?: Categoria;
-
   mostrarConfirmacion = false;
   eliminando = false;
 
@@ -44,19 +44,14 @@ export class CategoriasComponent implements OnInit {
     private catService: CategoriasService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-  ) {
-
-  }
+  ) {}
 
   ngOnInit() {
     this.catService.getCategorias().subscribe({
       next: (res) => {
         this.categorias = res.data ?? [];
-
-        // 🔍 Inicializar filtrado y paginación
         this.filtrarCategorias();
         this.actualizarPaginacion();
-
         this.cargando = false;
         this.cdr.detectChanges();
       },
@@ -67,7 +62,6 @@ export class CategoriasComponent implements OnInit {
     });
   }
 
-  // GETTER PARA CORREGIR EL ERROR DEL MATH
   get totalPaginas(): number {
     return Math.ceil(this.categoriasFiltradas.length / this.itemsPorPagina);
   }
@@ -93,37 +87,24 @@ export class CategoriasComponent implements OnInit {
   }
 
   eliminarCategoriaLocal(id: number) {
-    this.categorias = this.categorias.filter(
-      c => c.idCategoria !== id
-    );
-
+    this.categorias = this.categorias.filter(c => c.idCategoria !== id);
     this.filtrarCategorias();
     this.actualizarPaginacion();
   }
 
-
   actualizarPaginacion() {
     const inicio = this.paginaActual * this.itemsPorPagina;
     const fin = inicio + this.itemsPorPagina;
-
     this.datosPaginados = this.categoriasFiltradas.slice(inicio, fin);
   }
 
-
   filtrarCategorias() {
     const termino = this.terminoBusqueda.toLowerCase();
-
     this.categoriasFiltradas = this.categorias.filter(cat =>
       cat.nombreCategoria.toLowerCase().includes(termino)
     );
-
-    // Resetear página si se sale del rango
-    this.paginaActual = Math.min(
-      this.paginaActual,
-      Math.max(this.totalPaginas - 1, 0)
-    );
+    this.paginaActual = Math.min(this.paginaActual, Math.max(this.totalPaginas - 1, 0));
   }
-
 
   verObras(id: number) {
     this.router.navigate(['/obras-filtradas', 'categoria', id]);
@@ -137,7 +118,7 @@ export class CategoriasComponent implements OnInit {
     this.router.navigate(['/modificar-categoria', cat.idCategoria]);
   }
 
-  // ELIMINACIÓN ---------------------
+  // --- LÓGICA DE ELIMINACIÓN---
 
   abrirConfirmacion(cat: Categoria) {
     this.mostrarConfirmacion = true;
@@ -151,11 +132,10 @@ export class CategoriasComponent implements OnInit {
 
   confirmarEliminacion() {
     this.eliminando = true;
-    
-    if(!(this.catEliminar?.idCategoria)) {
-      return;
-    }
+    if(!(this.catEliminar?.idCategoria)) return;
+
     let id = this.catEliminar?.idCategoria;
+
     this.catService.eliminarCategoria(id).subscribe({
       next: () => {
         this.eliminarCategoriaLocal(id);
@@ -164,7 +144,6 @@ export class CategoriasComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: err => {
-        //this.error = 'Error eliminando el autor';
         this.eliminando = false;
         this.mostrarConfirmacion = false;
         console.error(err);
